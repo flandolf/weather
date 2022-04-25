@@ -30,10 +30,11 @@ var forecastd5 = "";
 class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
-    getLocation();
-    fetchAll();
-    getLocation();
-    fetchAll();
+    for(int i = 0; i < 5; i++){
+      getLocation();
+      fetchAll();
+    }
+
   }
 
   getLocation() async {
@@ -112,15 +113,16 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+     return Scaffold(
       body: Column(
         children: [
+
           SizedBox(
-            height: 60,
+            height: 50,
           ),
-          Text("Weather", style: TextStyle(fontSize: 40, fontFamily: 'Montserrat')),
+          Text("Weather", style: TextStyle(fontSize: 20, fontFamily: 'Montserrat')),
           Container(
-            margin: EdgeInsets.only(top: 20,left: 30, right: 30, bottom: 10),
+            margin: EdgeInsets.only(top: 10,left: 30, right: 30, bottom: 10),
             padding: EdgeInsets.all(10),
             width: double.infinity,
             decoration: BoxDecoration(
@@ -161,7 +163,7 @@ class _HomeScreenState extends State<HomeScreen> {
               margin: EdgeInsets.only(left: 30, top: 10, right: 30),
               padding: EdgeInsets.all(10),
               width: double.infinity,
-              height: 450,
+              height: 442,
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
@@ -184,7 +186,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Text('Forecast Currently',
                       textAlign: TextAlign.left,
                       style: TextStyle(
-                          fontSize: 17,
+                          fontSize: 12,
                           fontWeight: FontWeight.bold,
                           fontFamily: 'Montserrat')),
                   Container(
@@ -215,14 +217,14 @@ class _HomeScreenState extends State<HomeScreen> {
                               Text(
                                 'Current Temp',
                                 style: TextStyle(
-                                    fontSize: 17,
+                                    fontSize: 12,
                                     fontWeight: FontWeight.bold,
                                     fontFamily: 'Montserrat'),
                               ),
                               Text(
                                 '${Temp}°C',
                                 style: TextStyle(
-                                    fontSize: 17, fontFamily: 'Montserrat'),
+                                    fontSize: 12, fontFamily: 'Montserrat'),
                               ),
                             ],
                           ),
@@ -264,14 +266,14 @@ class _HomeScreenState extends State<HomeScreen> {
                               Text(
                                 'Feels Like',
                                 style: TextStyle(
-                                    fontSize: 17,
+                                    fontSize: 12,
                                     fontWeight: FontWeight.bold,
                                     fontFamily: 'Montserrat'),
                               ),
                               Text(
                                 '${feelsLike}°C',
                                 style: TextStyle(
-                                    fontSize: 17, fontFamily: 'Montserrat'),
+                                    fontSize: 12, fontFamily: 'Montserrat'),
                               ),
                             ],
                           ),
@@ -286,7 +288,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   Text('Forecast Next 3 Days',
                       style: TextStyle(
-                          fontSize: 17,
+                          fontSize: 12,
                           fontWeight: FontWeight.bold,
                           fontFamily: 'Montserrat')),
                   Container(
@@ -318,14 +320,14 @@ class _HomeScreenState extends State<HomeScreen> {
                               Text(
                                 'Day 1',
                                 style: TextStyle(
-                                    fontSize: 17,
+                                    fontSize: 12,
                                     fontWeight: FontWeight.bold,
                                     fontFamily: 'Montserrat'),
                               ),
                               Text(
                                 'Maximum: ${forecastd1}°C',
                                 style: TextStyle(
-                                    fontSize: 17, fontFamily: 'Montserrat'),
+                                    fontSize: 12, fontFamily: 'Montserrat'),
                               ),
                             ],
                           ),
@@ -367,14 +369,14 @@ class _HomeScreenState extends State<HomeScreen> {
                               Text(
                                 'Day 2',
                                 style: TextStyle(
-                                    fontSize: 17,
+                                    fontSize: 12,
                                     fontWeight: FontWeight.bold,
                                     fontFamily: 'Montserrat'),
                               ),
                               Text(
                                 'Maximum: ${forecastd2}°C',
                                 style: TextStyle(
-                                    fontSize: 17, fontFamily: 'Montserrat'),
+                                    fontSize: 12, fontFamily: 'Montserrat'),
                               ),
                             ],
                           ),
@@ -416,14 +418,14 @@ class _HomeScreenState extends State<HomeScreen> {
                               Text(
                                 'Day 3',
                                 style: TextStyle(
-                                    fontSize: 17,
+                                    fontSize: 12,
                                     fontWeight: FontWeight.bold,
                                     fontFamily: 'Montserrat'),
                               ),
                               Text(
                                 'Maximum: ${forecastd3}°C',
                                 style: TextStyle(
-                                    fontSize: 17, fontFamily: 'Montserrat'),
+                                    fontSize: 12, fontFamily: 'Montserrat'),
                               ),
                             ],
                           ),
