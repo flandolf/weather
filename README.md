@@ -15,9 +15,9 @@ Go to the `build\outputs\flutter-apk\` folder and run `adb install app-release.a
 - Next 3 Day Forecast
 - Open Source
 ## Other Libraries
-- geolocator
-- geocoding
-- http
+- [geolocator](https://pub.dev/packages/geolocator)
+- [geocoding](https://pub.dev/packages/geocoding)
+- [http](https://pub.dev/packages/http)
 ## Contact Me!
 - [My website](https://dumpyy.xyz)
 - Telegram / @andywang14
