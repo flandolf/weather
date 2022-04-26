@@ -1,4 +1,4 @@
-# Counter ➕
+# Weather☀⛅🌦️
 ![](https://img.shields.io/github/repo-size/dumpydev/weather?style=flat-square)
 ![](https://img.shields.io/github/license/dumpydev/weather?style=flat-square)  
 ![](https://img.shields.io/badge/fluttersdk-%3E%3D2.16.2-important)
