@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+
 import 'package:flutter/material.dart';
 
 import 'HomeScreeen.dart';
@@ -26,11 +28,26 @@ class _InfoScreenState extends State<InfoScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Full Detail'),
-      ),
       body: Center(
-        child: Text('Full Detail'),
+        child: Column(
+          children: [
+            SizedBox(
+              height: 100,
+            ),
+            Text(
+              'Info',
+              style: Theme.of(context).textTheme.headline4,
+            ),
+            Text(
+              '(C) 2022 by Dumpy',
+              style: Theme.of(context).textTheme.headline6,
+            ),
+            Text(
+              'Api by https://weatherapi.com',
+              style: Theme.of(context).textTheme.headline6,
+            ),
+          ],
+        ),
       ),
       bottomNavigationBar: _showBottomNav(),
     );
