@@ -9,6 +9,7 @@ import 'package:http/http.dart' as http;
 import 'package:weather/Info.dart';
 import 'package:weather/Weather.dart';
 import 'package:weather/forecastwidget.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -44,8 +45,11 @@ var forecastdm5 = "";
 bool isSunny = false;
 
 class _HomeScreenState extends State<HomeScreen> {
+  @override
   void initState() {
     super.initState();
+    getLocation();
+    getLocation();
     for (int i = 0; i < 5; i++) {
       getLocation();
       fetchAll();
@@ -73,7 +77,8 @@ class _HomeScreenState extends State<HomeScreen> {
     if (response.statusCode == 200) {
       var jsonData = response.body;
       var parsedJson = json.decode(jsonData);
-      print('-------------------Start JSON---------------------\nwith data: $lat as lat and $longitude as long');
+      print(
+          '-------------------Start JSON---------------------\nwith data: $lat as lat and $longitude as long');
       print(parsedJson);
       print('-------------------End JSON-----------------------');
       setState(() {
@@ -147,28 +152,29 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color(0xff3dc1fd), Color(0xffb31148)],
-              begin: Alignment.topRight,
-              end: Alignment.bottomLeft,
-            )
-
-
-        ),
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
+        decoration: styleSelect
+            ? BoxDecoration(
+                gradient: LinearGradient(
+                colors: [Color(0xfffbff29), Color(0xff03a1e9)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ))
+            : BoxDecoration(
+                gradient: LinearGradient(
+                colors: [Color(0xff3dc1fd), Color(0xffb31148)],
+                begin: Alignment.topRight,
+                end: Alignment.bottomLeft,
+              )),
+        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           Text(
             "Weather",
-            style: TextStyle(fontSize: 25, color: Colors.white),
+            style: GoogleFonts.rubik(textStyle: TextStyle(fontSize: 40)),
           ),
           Container(
             margin: EdgeInsets.only(top: 10, left: 30, right: 30, bottom: 10),
             padding: EdgeInsets.all(10),
             width: double.infinity,
             decoration: BoxDecoration(
-              
               color: Colors.white.withOpacity(0.5),
               borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(10),
@@ -189,7 +195,8 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 Text(
                   'Your location: $currentLocation',
-                  style: TextStyle(fontSize: 15, color: Colors.white),
+                  style: GoogleFonts.rubik(
+                      textStyle: TextStyle(fontSize: 15, color: Colors.white)),
                 ),
                 Icon(
                   Icons.location_on,
@@ -223,14 +230,11 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Text(
-                  'Forecast Currently',
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                      fontSize: 20,
-                      color: Colors.white,
-                      ),
-                ),
+                Text('Forecast Currently',
+                    textAlign: TextAlign.left,
+                    style: GoogleFonts.rubik(
+                        textStyle:
+                            TextStyle(fontSize: 20, color: Colors.white))),
                 Container(
                   margin:
                       EdgeInsets.only(left: 10, top: 10, right: 10, bottom: 10),
@@ -260,15 +264,21 @@ class _HomeScreenState extends State<HomeScreen> {
                           children: [
                             Text(
                               'Current Temp: $Temp°C',
-                              style: TextStyle(fontSize: 15, color: Colors.black),
+                              style: GoogleFonts.rubik(
+                                  textStyle: TextStyle(
+                                      fontSize: 15, color: Colors.black)),
                             ),
                             Text(
                               'Minimum Temp: $mintemp°C',
-                              style: TextStyle(fontSize: 15, color: Colors.black),
+                              style: GoogleFonts.rubik(
+                                  textStyle: TextStyle(
+                                      fontSize: 15, color: Colors.black)),
                             ),
                             Text(
                               'Feels Like: $feelsLike°C',
-                              style: TextStyle(fontSize: 15, color: Colors.black),
+                              style: GoogleFonts.rubik(
+                                  textStyle: TextStyle(
+                                      fontSize: 15, color: Colors.black)),
                             ),
                           ],
                         ),
@@ -282,10 +292,14 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                 ),
-                Text("Today's Forecast", style: TextStyle(fontSize: 20, color: Colors.white),),
+                Text(
+                  "Today's Forecast",
+                  style: GoogleFonts.rubik(
+                      textStyle: TextStyle(fontSize: 20, color: Colors.white)),
+                ),
                 Container(
                   margin:
-                  EdgeInsets.only(left: 10, top: 10, right: 10, bottom: 10),
+                      EdgeInsets.only(left: 10, top: 10, right: 10, bottom: 10),
                   padding: EdgeInsets.all(10),
                   width: 700,
                   decoration: BoxDecoration(
@@ -312,11 +326,15 @@ class _HomeScreenState extends State<HomeScreen> {
                           children: [
                             Text(
                               'Minimum Temp: $mintemp°C',
-                              style: TextStyle(fontSize: 15, color: Colors.black),
+                              style: GoogleFonts.rubik(
+                                  textStyle: TextStyle(
+                                      fontSize: 15, color: Colors.black)),
                             ),
                             Text(
                               'Maximum Temp: $maxtempcurrent°C',
-                              style: TextStyle(fontSize: 15, color: Colors.black),
+                              style: GoogleFonts.rubik(
+                                  textStyle: TextStyle(
+                                      fontSize: 15, color: Colors.black)),
                             ),
                           ],
                         ),
@@ -325,13 +343,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 Text('Forecast Next 3 Days',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontFamily: 'Montserrat')),
+                    style: GoogleFonts.rubik(
+                    textStyle: TextStyle(
+                    fontSize: 15, color: Colors.black)),),
                 Container(
-                    margin:
-                        EdgeInsets.only(left: 10, top: 10, right: 10, bottom: 10),
+                    margin: EdgeInsets.only(
+                        left: 10, top: 10, right: 10, bottom: 10),
                     padding: EdgeInsets.all(10),
                     width: 700,
                     decoration: BoxDecoration(

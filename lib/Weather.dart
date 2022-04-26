@@ -23,6 +23,7 @@ class _fulldetailState extends State<fulldetail> {
       'Index 2: Info',
     ),
   ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,26 +32,30 @@ class _fulldetailState extends State<fulldetail> {
       ),
       body: Center(
         child: Text('Full Detail'),
+
       ),
+
       bottomNavigationBar: _showBottomNav(),
     );
   }
-  void _onTap(int index)
-  {
+
+  void _onTap(int index) {
     _selectedIndex = index;
     setState(() {
       if (_selectedIndex == 0) {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => HomeScreen()));
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => HomeScreen()));
       } else if (_selectedIndex == 1) {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => fulldetail()));
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => fulldetail()));
       } else if (_selectedIndex == 2) {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => InfoScreen()));
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => InfoScreen()));
       }
     });
-
   }
-  Widget _showBottomNav()
-  {
+
+  Widget _showBottomNav() {
     return BottomNavigationBar(
       items: [
         BottomNavigationBarItem(

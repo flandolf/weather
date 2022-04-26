@@ -1,4 +1,7 @@
 # Miscellaneous
+#others
+/lib/secrets.dart
+
 *.class
 *.log
 *.pyc
@@ -45,5 +48,3 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
-#others
-/lib/secrets.dart
