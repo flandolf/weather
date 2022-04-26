@@ -4,10 +4,14 @@
 ![](https://img.shields.io/badge/fluttersdk-%3E%3D2.16.2-important)
 ![](https://img.shields.io/badge/version-2.0.1-critical)
 ## How to Install ⬅️
+### You will need a Openweathermap.org API (Free)
 run `git clone https://github.com/dumpydev/weather.git`  
-run `flutter build apk`   
-Go to the `build\outputs\flutter-apk\` folder and run `adb install app-release.apk`   
-# Download Link ⬇️
+
+Now add a file in /lib/ call it 'secrets.dart'       
+put your key like `var apikey = 'your_api_key`   
+run `flutter build apk`       
+Go to the `build\outputs\flutter-apk\` folder and run `adb install app-release.apk`           
+# Download Link ⬇️ (Doesn't require api key.)
 [Download Link](https://dumpyy.gq/files/weather.apk)
 
 ## Features
