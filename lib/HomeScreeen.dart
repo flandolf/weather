@@ -168,7 +168,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           Text(
             "Weather",
-            style: GoogleFonts.rubik(textStyle: TextStyle(fontSize: 40)),
+            style: GoogleFonts.montserrat(textStyle: TextStyle(fontSize: 40)),
           ),
           Container(
             margin: EdgeInsets.only(top: 10, left: 30, right: 30, bottom: 10),
@@ -195,7 +195,7 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 Text(
                   'Your location: $currentLocation',
-                  style: GoogleFonts.rubik(
+                  style: GoogleFonts.montserrat(
                       textStyle: TextStyle(fontSize: 15, color: Colors.white)),
                 ),
                 Icon(
@@ -232,7 +232,7 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 Text('Forecast Currently',
                     textAlign: TextAlign.left,
-                    style: GoogleFonts.rubik(
+                    style: GoogleFonts.montserrat(
                         textStyle:
                             TextStyle(fontSize: 20, color: Colors.white))),
                 Container(
@@ -264,19 +264,19 @@ class _HomeScreenState extends State<HomeScreen> {
                           children: [
                             Text(
                               'Current Temp: $Temp°C',
-                              style: GoogleFonts.rubik(
+                              style: GoogleFonts.montserrat(
                                   textStyle: TextStyle(
                                       fontSize: 15, color: Colors.black)),
                             ),
                             Text(
                               'Minimum Temp: $mintemp°C',
-                              style: GoogleFonts.rubik(
+                              style: GoogleFonts.montserrat(
                                   textStyle: TextStyle(
                                       fontSize: 15, color: Colors.black)),
                             ),
                             Text(
                               'Feels Like: $feelsLike°C',
-                              style: GoogleFonts.rubik(
+                              style: GoogleFonts.montserrat(
                                   textStyle: TextStyle(
                                       fontSize: 15, color: Colors.black)),
                             ),
@@ -294,7 +294,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 Text(
                   "Today's Forecast",
-                  style: GoogleFonts.rubik(
+                  style: GoogleFonts.montserrat(
                       textStyle: TextStyle(fontSize: 20, color: Colors.white)),
                 ),
                 Container(
@@ -326,13 +326,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           children: [
                             Text(
                               'Minimum Temp: $mintemp°C',
-                              style: GoogleFonts.rubik(
+                              style: GoogleFonts.montserrat(
                                   textStyle: TextStyle(
                                       fontSize: 15, color: Colors.black)),
                             ),
                             Text(
                               'Maximum Temp: $maxtempcurrent°C',
-                              style: GoogleFonts.rubik(
+                              style: GoogleFonts.montserrat(
                                   textStyle: TextStyle(
                                       fontSize: 15, color: Colors.black)),
                             ),
@@ -342,10 +342,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                 ),
-                Text('Forecast Next 3 Days',
-                    style: GoogleFonts.rubik(
-                    textStyle: TextStyle(
-                    fontSize: 15, color: Colors.black)),),
+                Text(
+                  'Forecast Next 3 Days',
+                  style: GoogleFonts.montserrat(
+                      textStyle: TextStyle(fontSize: 15, color: Colors.white)),
+                ),
                 Container(
                     margin: EdgeInsets.only(
                         left: 10, top: 10, right: 10, bottom: 10),
@@ -442,13 +443,25 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       if (_selectedIndex == 0) {
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => HomeScreen()));
+            context,
+            PageRouteBuilder(
+                pageBuilder: (context, animation1, animation2) => HomeScreen(),
+                transitionDuration: Duration.zero,
+                reverseTransitionDuration: Duration.zero));
       } else if (_selectedIndex == 1) {
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => fulldetail()));
+            context,
+            PageRouteBuilder(
+                pageBuilder: (context, animation1, animation2) => fulldetail(),
+                transitionDuration: Duration.zero,
+                reverseTransitionDuration: Duration.zero));
       } else if (_selectedIndex == 2) {
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => InfoScreen()));
+            context,
+            PageRouteBuilder(
+                pageBuilder: (context, animation1, animation2) => InfoScreen(),
+                transitionDuration: Duration.zero,
+                reverseTransitionDuration: Duration.zero));
       }
     });
   }

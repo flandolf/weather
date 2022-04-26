@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import 'HomeScreeen.dart';
 import 'Info.dart';
+import 'Weather.dart';
 int style = 0;
 bool styleSelect = true;
 class InfoScreen extends StatefulWidget {
@@ -84,13 +85,13 @@ class _InfoScreenState extends State<InfoScreen> {
     setState(() {
       if (_selectedIndex == 0) {
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => HomeScreen()));
+            context, PageRouteBuilder(pageBuilder: (context, animation1, animation2) => HomeScreen(), transitionDuration: Duration.zero, reverseTransitionDuration: Duration.zero));
       } else if (_selectedIndex == 1) {
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => InfoScreen()));
+            context, PageRouteBuilder(pageBuilder: (context, animation1, animation2) => fulldetail(), transitionDuration: Duration.zero, reverseTransitionDuration: Duration.zero));
       } else if (_selectedIndex == 2) {
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => InfoScreen()));
+            context, PageRouteBuilder(pageBuilder: (context, animation1, animation2) => InfoScreen(), transitionDuration: Duration.zero, reverseTransitionDuration: Duration.zero));
       }
     });
   }

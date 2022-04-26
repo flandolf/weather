@@ -12,18 +12,19 @@ Widget forecastWidget({required String day,
         children: [
           isSunny ? Icon(Icons.sunny, size: 20, color: Colors.yellow,) : Icon(
             Icons.cloud, size: 20, color: Colors.grey,),
-          Text(day, style: GoogleFonts.rubik(
+          Text(day, style: GoogleFonts.montserrat(
               textStyle: TextStyle(
-                  fontSize: 15, color: Colors.black)),),
-          Text(temp, style: GoogleFonts.rubik(
+                  fontSize: 10, color: Colors.black)),),
+          Text(temp, style: GoogleFonts.montserrat(
               textStyle: TextStyle(
-                  fontSize: 15, color: Colors.black)),),
-          Text(tempHigh, style: GoogleFonts.rubik(
+                  fontSize: 10, color: Colors.black)),),
+          Text(tempHigh, style: GoogleFonts.montserrat(
               textStyle: TextStyle(
-                  fontSize: 15, color: Colors.black)),),
-          Text(tempLow, style: GoogleFonts.rubik(
+                  fontSize: 10, color: Colors.black)),),
+          Text(tempLow, style: GoogleFonts.montserrat(
               textStyle: TextStyle(
-                  fontSize: 15, color: Colors.black)),),
+                  fontSize: 10, color: Colors.black)),),
+          
         ],
       )
   );
