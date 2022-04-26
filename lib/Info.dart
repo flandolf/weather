@@ -43,7 +43,7 @@ class _InfoScreenState extends State<InfoScreen> {
               style: Theme.of(context).textTheme.headline6,
             ),
             Text(
-              'Api by https://weatherapi.com',
+              'Api by https://openweathermap.org',
               style: Theme.of(context).textTheme.headline6,
             ),
           ],

@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, prefer_final_fields
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, prefer_final_fields, avoid_print, unused_field
 import 'dart:convert';
 import 'package:weather/hourlyweatherwidget.dart';
 import 'package:weather/secrets.dart';
@@ -24,6 +24,8 @@ String currentLocation = "";
 bool currentlyCloudy = false;
 String? JsonData;
 int? Temp;
+int? mintemp;
+int? maxtempcurrent;
 var forecastd1 = "";
 var forecastd2 = "";
 var forecastd3 = "";
@@ -66,20 +68,19 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future fetchCurrent() async {
-    var oldapi =
-        'https://api.weatherapi.com/v1/current.json?key=ed2af51e777a427cb9670501222504&q=${lat},${longitude}&aqi=no';
     final response = await http.get(Uri.parse(
-        'https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${longitude}&appid=${apikey}&units=metric&exclude=minutely,hourly,alerts,daily'));
-    print(response.body);
+        'https://api.openweathermap.org/data/2.5/onecall?lat=$lat&lon=$longitude&appid=$apikey&units=metric&exclude=minutely,hourly,alerts'));
     if (response.statusCode == 200) {
       var jsonData = response.body;
       var parsedJson = json.decode(jsonData);
-      print('-------------------Start JSON---------------------');
+      print('-------------------Start JSON---------------------\nwith data: $lat as lat and $longitude as long');
       print(parsedJson);
       print('-------------------End JSON-----------------------');
       setState(() {
         Temp = parsedJson['current']['temp'].toInt();
         feelsLike = parsedJson['current']['feels_like'].toInt();
+        mintemp = parsedJson['daily'][0]['temp']['min'].round().toInt();
+        maxtempcurrent = parsedJson['daily'][0]['temp']['max'].round().toInt();
         if (parsedJson['current']['clouds'] < 50) {
           currentlyCloudy = false;
         } else {
@@ -93,11 +94,10 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-
   Future fetchForecast() async {
     print('made it here');
     var uri =
-        'https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${longitude}&appid=${apikey}&units=metric';
+        'https://api.openweathermap.org/data/2.5/forecast?lat=$lat&lon=$longitude&appid=$apikey&units=metric';
     final response = await http.get(Uri.parse(uri));
     print('-------------------Start JSON---------------------');
     json.decode(response.body);
@@ -146,210 +146,92 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(children: [
-        SizedBox(
-          height: 50,
+      body: Container(
+        decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xff3dc1fd), Color(0xffb31148)],
+              begin: Alignment.topRight,
+              end: Alignment.bottomLeft,
+            )
+
+
         ),
-        Text(
-          "Weather / Dark",
-          style: TextStyle(fontSize: 15, color: Colors.white),
-        ),
-        Container(
-          margin: EdgeInsets.only(top: 10, left: 30, right: 30, bottom: 10),
-          padding: EdgeInsets.all(10),
-          width: double.infinity,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(10),
-                topRight: Radius.circular(10),
-                bottomLeft: Radius.circular(10),
-                bottomRight: Radius.circular(10)),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.5),
-                spreadRadius: 5,
-                blurRadius: 7,
-                offset: Offset(0, 3), // changes position of shadow
-              ),
-            ],
-          ),
-          child: Row(
+        child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
-                'Your location: $currentLocation',
-                style: TextStyle(fontSize: 15, color: Colors.black),
-              ),
-              Icon(
-                Icons.location_on,
-                color: Colors.blue,
-                size: 23,
-              ),
-            ],
+          Text(
+            "Weather",
+            style: TextStyle(fontSize: 25, color: Colors.white),
           ),
-        ),
-        Container(
-          margin: EdgeInsets.only(left: 10, top: 10, right: 10, bottom: 10),
-          padding: EdgeInsets.all(10),
-          width: 800,
-          height: 442,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(10),
-                topRight: Radius.circular(10),
-                bottomLeft: Radius.circular(10),
-                bottomRight: Radius.circular(10)),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.5),
-                spreadRadius: 5,
-                blurRadius: 7,
-                offset: Offset(0, 3), // changes position of shadow
-              ),
-            ],
+          Container(
+            margin: EdgeInsets.only(top: 10, left: 30, right: 30, bottom: 10),
+            padding: EdgeInsets.all(10),
+            width: double.infinity,
+            decoration: BoxDecoration(
+              
+              color: Colors.white.withOpacity(0.5),
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(10),
+                  topRight: Radius.circular(10),
+                  bottomLeft: Radius.circular(10),
+                  bottomRight: Radius.circular(10)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.5),
+                  spreadRadius: 5,
+                  blurRadius: 7,
+                  offset: Offset(0, 3), // changes position of shadow
+                ),
+              ],
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Your location: $currentLocation',
+                  style: TextStyle(fontSize: 15, color: Colors.white),
+                ),
+                Icon(
+                  Icons.location_on,
+                  color: Colors.white,
+                  size: 23,
+                ),
+              ],
+            ),
           ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Text(
-                'Forecast Currently',
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                    fontSize: 15,
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold),
-              ),
-              Container(
-                margin:
-                    EdgeInsets.only(left: 10, top: 10, right: 10, bottom: 10),
-                padding: EdgeInsets.all(10),
-                width: 700,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(10),
-                      topRight: Radius.circular(10),
-                      bottomLeft: Radius.circular(10),
-                      bottomRight: Radius.circular(10)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      spreadRadius: 5,
-                      blurRadius: 7,
-                      offset: Offset(0, 3), // changes position of shadow
-                    ),
-                  ],
+          Container(
+            margin: EdgeInsets.only(left: 10, top: 10, right: 10, bottom: 10),
+            padding: EdgeInsets.all(10),
+            width: 800,
+            height: 442,
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.2),
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(10),
+                  topRight: Radius.circular(10),
+                  bottomLeft: Radius.circular(10),
+                  bottomRight: Radius.circular(10)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.5),
+                  spreadRadius: 5,
+                  blurRadius: 7,
+                  offset: Offset(0, 3), // changes position of shadow
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        children: [
-                          Text(
-                            'Current Temp: ${Temp}°C',
-                            style: TextStyle(fontSize: 15, color: Colors.black),
-                          ),
-                          Text(
-                            'Minimum Temp',
-                            style: TextStyle(fontSize: 15, color: Colors.black),
-                          ),
-                          Text(
-                            'Feels Like: ${feelsLike}°C',
-                            style: TextStyle(fontSize: 15, color: Colors.black),
-                          ),
-                        ],
-                      ),
-                    ),
-                    currentlyCloudy
-                        ? Icon(Icons.cloud, color: Colors.grey)
-                        : Icon(
-                            Icons.sunny,
-                            color: Colors.yellow,
-                          ),
-                  ],
-                ),
-              ),
-              Container(
-                margin: const EdgeInsets.symmetric(vertical: 20.0),
-                height: 70.0,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(10),
-                      topRight: Radius.circular(10),
-                      bottomLeft: Radius.circular(10),
-                      bottomRight: Radius.circular(10)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      spreadRadius: 5,
-                      blurRadius: 7,
-                      offset: Offset(0, 3), // changes position of shadow
-                    ),
-                  ],
-                ),
-                child: ListView(
-                  // This next line does the trick.
-                  scrollDirection: Axis.horizontal,
-                  children: <Widget>[
-                    Container(
-                      width: 80.0,
-                      color: Colors.red,
-                      child: hourlyweather('12pm', 'sunny', '${Temp}°C'),
-                    ),
-                    Container(
-                      width: 80.0,
-                      color: Colors.blue,
-                    ),
-                    Container(
-                      width: 80.0,
-                      color: Colors.green,
-                    ),
-                    Container(
-                      width: 80.0,
-                      color: Colors.yellow,
-                    ),
-                    Container(
-                      width: 80.0,
-                      color: Colors.orange,
-                    ),
-                    Container(
-                      width: 80.0,
-                      color: Colors.red,
-                    ),
-                    Container(
-                      width: 80.0,
-                      color: Colors.blue,
-                    ),
-                    Container(
-                      width: 80.0,
-                      color: Colors.green,
-                    ),
-                    Container(
-                      width: 80.0,
-                      color: Colors.yellow,
-                    ),
-                    Container(
-                      width: 80.0,
-                      color: Colors.orange,
-                    ),
-                    Container(
-                      width: 80.0,
-                      color: Colors.red,
-                    ),
-                  ],
-                ),
-              ),
-              Text('Forecast Next 3 Days',
+              ],
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                  'Forecast Currently',
+                  textAlign: TextAlign.left,
                   style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 17,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'Montserrat')),
-              Container(
+                      fontSize: 20,
+                      color: Colors.white,
+                      ),
+                ),
+                Container(
                   margin:
                       EdgeInsets.only(left: 10, top: 10, right: 10, bottom: 10),
                   padding: EdgeInsets.all(10),
@@ -374,38 +256,137 @@ class _HomeScreenState extends State<HomeScreen> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Expanded(
-                          child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          forecastWidget(
-                              day: "Day 1",
-                              isSunny: isSunny,
-                              temp: 'Avg: ' + forecastda1 + '°C',
-                              tempHigh: 'Max: ' + forecastd1 + '°C',
-                              tempLow: 'Min: ' + forecastdm1 + '°C'),
-                          SizedBox(width: 7),
-                          forecastWidget(
-                              day: "Day 2",
-                              isSunny: isSunny,
-                              temp: 'Avg: ' + forecastda2 + '°C',
-                              tempHigh: 'Max: ' + forecastd2 + '°C',
-                              tempLow: 'Min: ' + forecastdm2 + '°C'),
-                          SizedBox(width: 7),
-                          forecastWidget(
-                              day: "Day 3",
-                              isSunny: isSunny,
-                              temp: 'Avg: ' + forecastda3 + '°C',
-                              tempHigh: 'Max: ' + forecastd3 + '°C',
-                              tempLow: 'Min: ' + forecastdm3 + '°C'),
-                          SizedBox(width: 7),
-                        ],
-                      )),
+                        child: Column(
+                          children: [
+                            Text(
+                              'Current Temp: $Temp°C',
+                              style: TextStyle(fontSize: 15, color: Colors.black),
+                            ),
+                            Text(
+                              'Minimum Temp: $mintemp°C',
+                              style: TextStyle(fontSize: 15, color: Colors.black),
+                            ),
+                            Text(
+                              'Feels Like: $feelsLike°C',
+                              style: TextStyle(fontSize: 15, color: Colors.black),
+                            ),
+                          ],
+                        ),
+                      ),
+                      currentlyCloudy
+                          ? Icon(Icons.cloud, color: Colors.grey)
+                          : Icon(
+                              Icons.sunny,
+                              color: Colors.yellow,
+                            ),
                     ],
-                  ))
-            ],
+                  ),
+                ),
+                Text("Today's Forecast", style: TextStyle(fontSize: 20, color: Colors.white),),
+                Container(
+                  margin:
+                  EdgeInsets.only(left: 10, top: 10, right: 10, bottom: 10),
+                  padding: EdgeInsets.all(10),
+                  width: 700,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(10),
+                        topRight: Radius.circular(10),
+                        bottomLeft: Radius.circular(10),
+                        bottomRight: Radius.circular(10)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.5),
+                        spreadRadius: 5,
+                        blurRadius: 7,
+                        offset: Offset(0, 3), // changes position of shadow
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          children: [
+                            Text(
+                              'Minimum Temp: $mintemp°C',
+                              style: TextStyle(fontSize: 15, color: Colors.black),
+                            ),
+                            Text(
+                              'Maximum Temp: $maxtempcurrent°C',
+                              style: TextStyle(fontSize: 15, color: Colors.black),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Text('Forecast Next 3 Days',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontFamily: 'Montserrat')),
+                Container(
+                    margin:
+                        EdgeInsets.only(left: 10, top: 10, right: 10, bottom: 10),
+                    padding: EdgeInsets.all(10),
+                    width: 700,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(10),
+                          topRight: Radius.circular(10),
+                          bottomLeft: Radius.circular(10),
+                          bottomRight: Radius.circular(10)),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 5,
+                          blurRadius: 7,
+                          offset: Offset(0, 3), // changes position of shadow
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Expanded(
+                            child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            forecastWidget(
+                                day: "Day 1",
+                                isSunny: isSunny,
+                                temp: 'Avg: ' + forecastda1 + '°C',
+                                tempHigh: 'Max: ' + forecastd1 + '°C',
+                                tempLow: 'Min: ' + forecastdm1 + '°C'),
+                            SizedBox(width: 7),
+                            forecastWidget(
+                                day: "Day 2",
+                                isSunny: isSunny,
+                                temp: 'Avg: ' + forecastda2 + '°C',
+                                tempHigh: 'Max: ' + forecastd2 + '°C',
+                                tempLow: 'Min: ' + forecastdm2 + '°C'),
+                            SizedBox(width: 7),
+                            forecastWidget(
+                                day: "Day 3",
+                                isSunny: isSunny,
+                                temp: 'Avg: ' + forecastda3 + '°C',
+                                tempHigh: 'Max: ' + forecastd3 + '°C',
+                                tempLow: 'Min: ' + forecastdm3 + '°C'),
+                            SizedBox(width: 7),
+                          ],
+                        )),
+                      ],
+                    ))
+              ],
+            ),
           ),
-        ),
-      ]),
+        ]),
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: fetchAll,
         tooltip: 'Get Location',
@@ -417,6 +398,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _showBottomNav() {
     return BottomNavigationBar(
+      backgroundColor: Colors.white,
       items: [
         BottomNavigationBarItem(
           icon: Icon(Icons.home),
