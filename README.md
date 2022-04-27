@@ -6,11 +6,13 @@
 ## How to Build ⬅️
 ### You will need a Openweathermap.org API (Free)
 run `git clone https://github.com/dumpydev/weather.git`  
-
+run `flutter pub get`  
 Now add a file in /lib/ call it 'secrets.dart'       
 put your key like `var apikey = 'your_api_key`   
-run `flutter build apk`       
-Go to the `build\outputs\flutter-apk\` folder and run `adb install app-release.apk`          
+run `flutter pub get    
+flutter pub run flutter_launcher_icons:main      
+flutter build apk     
+adb install build/app/outputs/apk/app-release.apk    ` 
 
 # Download Link ⬇️ (Doesn't require api key.)
 [Download Link](https://dumpyy.gq/files/weather.apk)
