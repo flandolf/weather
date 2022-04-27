@@ -1,4 +1,4 @@
-# Weather☀⛅🌦️
+# Weather
 ![](https://img.shields.io/github/repo-size/dumpydev/weather?style=flat-square)
 ![](https://img.shields.io/github/license/dumpydev/weather?style=flat-square)  
 ![](https://img.shields.io/badge/fluttersdk-%3E%3D2.16.2-important)
@@ -15,7 +15,7 @@ Go to the `build\outputs\flutter-apk\` folder and run `adb install app-release.a
 # Download Link ⬇️ (Doesn't require api key.)
 [Download Link](https://dumpyy.gq/files/weather.apk)
 
-## Features
+# Features ☀️
 - Automatic Location Finding
 - Next 3 Day Forecast
 - Open Source
