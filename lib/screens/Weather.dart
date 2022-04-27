@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
-
 import 'package:weather/screens/Info.dart';
-import 'package:weather/homeScreen.dart';
-import 'package:weather/screens/Weather.dart';
+import 'package:weather/screens/homeScreen.dart';
 
-class fulldetail extends StatefulWidget {
-  const fulldetail({Key? key}) : super(key: key);
+class fullDetail extends StatefulWidget {
+  const fullDetail({Key? key}) : super(key: key);
 
   @override
-  State<fulldetail> createState() => _fulldetailState();
+  State<fullDetail> createState() => _fullDetailState();
 }
 
-class _fulldetailState extends State<fulldetail> {
+class _fullDetailState extends State<fullDetail> {
   int _selectedIndex = 1;
   List<Widget> _items = [
     Text(
@@ -33,9 +31,7 @@ class _fulldetailState extends State<fulldetail> {
       ),
       body: Center(
         child: Text('Full Detail'),
-
       ),
-
       bottomNavigationBar: _showBottomNav(),
     );
   }
@@ -45,13 +41,25 @@ class _fulldetailState extends State<fulldetail> {
     setState(() {
       if (_selectedIndex == 0) {
         Navigator.push(
-            context, PageRouteBuilder(pageBuilder: (context, animation1, animation2) => HomeScreen(), transitionDuration: Duration.zero, reverseTransitionDuration: Duration.zero));
+            context,
+            PageRouteBuilder(
+                pageBuilder: (context, animation1, animation2) => HomeScreen(),
+                transitionDuration: Duration.zero,
+                reverseTransitionDuration: Duration.zero));
       } else if (_selectedIndex == 1) {
         Navigator.push(
-            context, PageRouteBuilder(pageBuilder: (context, animation1, animation2) => fulldetail(), transitionDuration: Duration.zero, reverseTransitionDuration: Duration.zero));
+            context,
+            PageRouteBuilder(
+                pageBuilder: (context, animation1, animation2) => fullDetail(),
+                transitionDuration: Duration.zero,
+                reverseTransitionDuration: Duration.zero));
       } else if (_selectedIndex == 2) {
         Navigator.push(
-            context, PageRouteBuilder(pageBuilder: (context, animation1, animation2) => InfoScreen(), transitionDuration: Duration.zero, reverseTransitionDuration: Duration.zero));
+            context,
+            PageRouteBuilder(
+                pageBuilder: (context, animation1, animation2) => InfoScreen(),
+                transitionDuration: Duration.zero,
+                reverseTransitionDuration: Duration.zero));
       }
     });
   }

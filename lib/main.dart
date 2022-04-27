@@ -1,5 +1,8 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
-import 'package:weather/homeScreen.dart';
+import 'package:weather/screens/homeScreen.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -13,14 +16,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Weather',
       theme: ThemeData(
-        brightness: Brightness.light,
-        useMaterial3: true,
-        /* light theme settings */
-      ),
-      darkTheme: ThemeData(
-        brightness: Brightness.dark,
-        useMaterial3: true,
-        /* dark theme settings */
+        primarySwatch: Colors.blue,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       themeMode: ThemeMode.system,
       debugShowCheckedModeBanner: false,
@@ -28,4 +25,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-

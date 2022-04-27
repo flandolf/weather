@@ -1,11 +1,12 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
-import 'package:weather/screens/Info.dart';
-import 'package:weather/homeScreen.dart';
 import 'package:weather/screens/Weather.dart';
+import 'package:weather/screens/homeScreen.dart';
+
 int style = 0;
 bool styleSelect = true;
+
 class InfoScreen extends StatefulWidget {
   const InfoScreen({Key? key}) : super(key: key);
 
@@ -17,6 +18,7 @@ class _InfoScreenState extends State<InfoScreen> {
   Color getColor(Set<MaterialState> states) {
     return Colors.blue;
   }
+
   int _selectedIndex = 2;
   List<Widget> _items = [
     Text(
@@ -55,7 +57,6 @@ class _InfoScreenState extends State<InfoScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-
                 Text("Theme 2? "),
                 Checkbox(
                   value: styleSelect,
@@ -63,11 +64,9 @@ class _InfoScreenState extends State<InfoScreen> {
                   checkColor: Colors.white,
                   onChanged: (bool? value) {
                     setState(() {
-
                       styleSelect = value!;
                       print(styleSelect);
                     });
-
                   },
                 ),
               ],
@@ -84,13 +83,25 @@ class _InfoScreenState extends State<InfoScreen> {
     setState(() {
       if (_selectedIndex == 0) {
         Navigator.push(
-            context, PageRouteBuilder(pageBuilder: (context, animation1, animation2) => HomeScreen(), transitionDuration: Duration.zero, reverseTransitionDuration: Duration.zero));
+            context,
+            PageRouteBuilder(
+                pageBuilder: (context, animation1, animation2) => HomeScreen(),
+                transitionDuration: Duration.zero,
+                reverseTransitionDuration: Duration.zero));
       } else if (_selectedIndex == 1) {
         Navigator.push(
-            context, PageRouteBuilder(pageBuilder: (context, animation1, animation2) => fulldetail(), transitionDuration: Duration.zero, reverseTransitionDuration: Duration.zero));
+            context,
+            PageRouteBuilder(
+                pageBuilder: (context, animation1, animation2) => fullDetail(),
+                transitionDuration: Duration.zero,
+                reverseTransitionDuration: Duration.zero));
       } else if (_selectedIndex == 2) {
         Navigator.push(
-            context, PageRouteBuilder(pageBuilder: (context, animation1, animation2) => InfoScreen(), transitionDuration: Duration.zero, reverseTransitionDuration: Duration.zero));
+            context,
+            PageRouteBuilder(
+                pageBuilder: (context, animation1, animation2) => InfoScreen(),
+                transitionDuration: Duration.zero,
+                reverseTransitionDuration: Duration.zero));
       }
     });
   }

@@ -1,34 +1,20 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, prefer_final_fields, avoid_print, unused_field
 import 'dart:convert';
-import 'package:intl/intl.dart';
-import 'package:weather/services/hourVars.dart';
-import 'package:weather/widgets/hourlyWeatherWidget.dart';
-import 'package:weather/secrets.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:geocoding/geocoding.dart';
+
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:weather/screens/Info.dart';
 import 'package:weather/screens/Weather.dart';
+import 'package:weather/secrets.dart';
+import 'package:weather/services/Vars.dart';
+import 'package:weather/services/custom_icons_icons.dart';
 import 'package:weather/widgets/forecastWidget.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:weather/widgets/hourlyWeatherWidget.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
-
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-int? feelsLike;
-String? lat;
-String? longitude;
-String currentLocation = "";
-bool currentlyCloudy = false;
-String? JsonData;
-int? Temp;
-int? mintemp;
-int? maxtempcurrent;
 var forecastd1 = "";
 var forecastd2 = "";
 var forecastd3 = "";
@@ -44,25 +30,46 @@ var forecastdm2 = "";
 var forecastdm3 = "";
 var forecastdm4 = "";
 var forecastdm5 = "";
+int? feelsLike;
+String? lat;
+String? longitude;
+String currentLocation = "";
+bool currentlyCloudy = false;
+String? JsonData;
+int? Temp;
+int? mintemp;
+int? maxtempcurrent;
+
 bool over12 = false;
 bool over12am = false;
 int time2 = 0;
 int rawTime = 0;
 String time = "0";
 bool isSunny = false;
+String weatherState = "";
+
+String day1state = "";
+String day2state = "";
+String day3state = "";
+
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({Key? key}) : super(key: key);
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
 Future<String> getTime() async {
   var now = DateTime.now();
   return now.hour.toString();
 }
+
 Future<int> getTimeInt() async {
   var now = DateTime.now();
   return now.hour;
-
 }
 
-
 class _HomeScreenState extends State<HomeScreen> {
-
   Future fetchAll() async {
     rawTime = await getTimeInt();
     time = await getTime();
@@ -74,24 +81,17 @@ class _HomeScreenState extends State<HomeScreen> {
         time = time2.toString();
         time = time + "pm";
       });
-    }
-    else {
+    } else {
       setState(() {
         over12 = false;
         time = time + "am";
       });
     }
-    if((rawTime + 12) > 24) {
+    if ((rawTime + 12) > 24) {
       setState(() {
         over12am = true;
       });
     }
-    print(time2);
-    print(time);
-    print(rawTime);
-    print(over12);
-    print(over12am);
-
     getLocation();
     fetchWeather();
     fetchHourly();
@@ -115,8 +115,6 @@ class _HomeScreenState extends State<HomeScreen> {
         desiredAccuracy: LocationAccuracy.high);
     List<Placemark> placemark =
         await placemarkFromCoordinates(position.latitude, position.longitude);
-    print(placemark[0].toString());
-    print(position.latitude.toString() + " " + position.longitude.toString());
     setState(() {
       lat = position.latitude.toString();
       longitude = position.longitude.toString();
@@ -130,20 +128,12 @@ class _HomeScreenState extends State<HomeScreen> {
     if (response.statusCode == 200) {
       var jsonData = response.body;
       var parsedJson = json.decode(jsonData);
-      print(
-          '-------------------Start JSON---------------------\nwith data: $lat as lat and $longitude as long');
-      print(parsedJson);
-      print('-------------------End JSON-----------------------');
       setState(() {
         Temp = parsedJson['current']['temp'].toInt();
         feelsLike = parsedJson['current']['feels_like'].toInt();
         mintemp = parsedJson['daily'][0]['temp']['min'].round().toInt();
         maxtempcurrent = parsedJson['daily'][0]['temp']['max'].round().toInt();
-        if (parsedJson['current']['clouds'] < 50) {
-          currentlyCloudy = false;
-        } else {
-          currentlyCloudy = true;
-        }
+        weatherState = parsedJson['current']['weather'][0]['main'];
       });
     } else {
       // If the server did not return a 200 OK response,
@@ -151,30 +141,26 @@ class _HomeScreenState extends State<HomeScreen> {
       throw Exception('Failed to load weather');
     }
   }
+
   Future fetchWeather() async {
     final response = await http.get(Uri.parse(
         'https://api.openweathermap.org/data/2.5/weather?lat=$lat&lon=$longitude&appid=$apikey&units=metric'));
     if (response.statusCode == 200) {
       var jsonData = response.body;
-      var parsedJson = json.decode(jsonData);
-      print(
-          '-------------------Start JSON---------------------\nwith data: $lat as lat and $longitude as long');
-      print(parsedJson);
-      print('-------------------End JSON-----------------------');
+      var decodedjson = json.decode(jsonData);
+
+      setState(() {});
     } else {
       // If the server did not return a 200 OK response,
       // then throw an exception.
       throw Exception('Failed to load weather');
     }
   }
+
   Future fetchForecast() async {
-    print('made it here');
     var uri =
         'https://api.openweathermap.org/data/2.5/forecast?lat=$lat&lon=$longitude&appid=$apikey&units=metric';
     final response = await http.get(Uri.parse(uri));
-    print('-------------------Start JSON---------------------');
-    print(json.decode(response.body));
-    print('-------------------End JSON-----------------------');
     if (response.statusCode == 200) {
       var forecastJson = response.body;
       var parsedF = json.decode(forecastJson);
@@ -189,6 +175,21 @@ class _HomeScreenState extends State<HomeScreen> {
         forecastdm1 = parsedF['list'][0]['main']['temp_min'].toString();
         forecastdm2 = parsedF['list'][1]['main']['temp_min'].toString();
         forecastdm3 = parsedF['list'][2]['main']['temp_min'].toString();
+        hourweather1 = parsedF['list'][0]['weather'][0]['main'];
+        hourweather2 = parsedF['list'][1]['weather'][0]['main'];
+        hourweather3 = parsedF['list'][2]['weather'][0]['main'];
+        hourweather4 = parsedF['list'][3]['weather'][0]['main'];
+        hourweather5 = parsedF['list'][4]['weather'][0]['main'];
+        hourweather6 = parsedF['list'][5]['weather'][0]['main'];
+        hourweather7 = parsedF['list'][6]['weather'][0]['main'];
+        hourweather8 = parsedF['list'][7]['weather'][0]['main'];
+        hourweather9 = parsedF['list'][8]['weather'][0]['main'];
+        hourweather10 = parsedF['list'][9]['weather'][0]['main'];
+        hourweather11 = parsedF['list'][10]['weather'][0]['main'];
+        hourweather12 = parsedF['list'][11]['weather'][0]['main'];
+        day1state = parsedF['list'][0]['weather'][0]['main'];
+        day2state = parsedF['list'][1]['weather'][0]['main'];
+        day3state = parsedF['list'][2]['weather'][0]['main'];
 
         isSunny = true;
       });
@@ -201,41 +202,22 @@ class _HomeScreenState extends State<HomeScreen> {
     var uri =
         "https://api.openweathermap.org/data/2.5/onecall?lat=$lat&lon=$longitude&exclude=minutely,daily,alerts,current&appid=$apikey&units=metric";
     final response = await http.get(Uri.parse(uri));
-    print('-------------------Start JSON---------------------');
-    print(json.decode(response.body));
-    print('-------------------End JSON-----------------------');
 
-    if (response.statusCode != 200) {
-      throw Exception('Failed to load weather');
-    } else if (response.statusCode == 200) {
-      var decodedjson = json.decode(response.body);
-      setState(() {
-        hourtemp1 = decodedjson['hourly'][0]['temp'].round().toString();
-        hourtemp2 = decodedjson['hourly'][1]['temp'].round().toString();
-        hourtemp3 = decodedjson['hourly'][2]['temp'].round().toString();
-        hourtemp4 = decodedjson['hourly'][3]['temp'].round().toString();
-        hourtemp5 = decodedjson['hourly'][4]['temp'].round().toString();
-        hourtemp6 = decodedjson['hourly'][5]['temp'].round().toString();
-        hourtemp7 = decodedjson['hourly'][6]['temp'].round().toString();
-        hourtemp8 = decodedjson['hourly'][7]['temp'].round().toString();
-        hourtemp9 = decodedjson['hourly'][8]['temp'].round().toString();
-        hourtemp10 = decodedjson['hourly'][9]['temp'].round().toString();
-        hourtemp11 = decodedjson['hourly'][10]['temp'].round().toString();
-        hourtemp12 = decodedjson['hourly'][11]['temp'].round().toString();
-        hourweather1 = decodedjson['hourly'][0]['weather'][0]['main'];
-        hourweather2 = decodedjson['hourly'][1]['weather'][0]['main'];
-        hourweather3 = decodedjson['hourly'][2]['weather'][0]['main'];
-        hourweather4 = decodedjson['hourly'][3]['weather'][0]['main'];
-        hourweather5 = decodedjson['hourly'][4]['weather'][0]['main'];
-        hourweather6 = decodedjson['hourly'][5]['weather'][0]['main'];
-        hourweather7 = decodedjson['hourly'][6]['weather'][0]['main'];
-        hourweather8 = decodedjson['hourly'][7]['weather'][0]['main'];
-        hourweather9 = decodedjson['hourly'][8]['weather'][0]['main'];
-        hourweather10 = decodedjson['hourly'][9]['weather'][0]['main'];
-        hourweather11 = decodedjson['hourly'][10]['weather'][0]['main'];
-        hourweather12 = decodedjson['hourly'][11]['weather'][0]['main'];
-      });
-    }
+    var decodedjson = json.decode(response.body);
+    setState(() {
+      hourtemp1 = decodedjson['hourly'][0]['temp'].round().toString();
+      hourtemp2 = decodedjson['hourly'][1]['temp'].round().toString();
+      hourtemp3 = decodedjson['hourly'][2]['temp'].round().toString();
+      hourtemp4 = decodedjson['hourly'][3]['temp'].round().toString();
+      hourtemp5 = decodedjson['hourly'][4]['temp'].round().toString();
+      hourtemp6 = decodedjson['hourly'][5]['temp'].round().toString();
+      hourtemp7 = decodedjson['hourly'][6]['temp'].round().toString();
+      hourtemp8 = decodedjson['hourly'][7]['temp'].round().toString();
+      hourtemp9 = decodedjson['hourly'][8]['temp'].round().toString();
+      hourtemp10 = decodedjson['hourly'][9]['temp'].round().toString();
+      hourtemp11 = decodedjson['hourly'][10]['temp'].round().toString();
+      hourtemp12 = decodedjson['hourly'][11]['temp'].round().toString();
+    });
   }
 
   int _selectedIndex = 0;
@@ -271,7 +253,8 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           Text(
             "Weather",
-            style: GoogleFonts.montserrat(textStyle: TextStyle(fontSize: 40)),
+            style: GoogleFonts.rubik(
+                textStyle: TextStyle(fontSize: 40, color: Colors.white)),
           ),
           Container(
             margin: EdgeInsets.only(top: 10, left: 30, right: 30, bottom: 10),
@@ -386,12 +369,36 @@ class _HomeScreenState extends State<HomeScreen> {
                           ],
                         ),
                       ),
-                      currentlyCloudy
-                          ? Icon(Icons.cloud, color: Colors.grey)
-                          : Icon(
-                              Icons.sunny,
-                              color: Colors.yellow,
-                            ),
+                      if (weatherState == "Clouds")
+                        Icon(
+                          CustomIcons.cloud_inv,
+                          size: 30.0,
+                          color: Colors.grey,
+                        ),
+                      if (weatherState == "Clear")
+                        Icon(
+                          CustomIcons.sun_inv,
+                          size: 30.0,
+                          color: Colors.yellow,
+                        ),
+                      if (weatherState == "Rain")
+                        Icon(
+                          CustomIcons.rain_inv,
+                          size: 30.0,
+                          color: Colors.blue,
+                        ),
+                      if (weatherState == "Snow")
+                        Icon(
+                          CustomIcons.snow_inv,
+                          size: 30.0,
+                          color: Colors.white,
+                        ),
+                      if (weatherState == "Thunderstorm")
+                        Icon(
+                          CustomIcons.clouds_flash_inv,
+                          size: 30.0,
+                          color: Colors.blue,
+                        ),
                     ],
                   ),
                 ),
@@ -417,55 +424,108 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                   child: Container(
-                    height: 60.0,
+                    height: 80.0,
                     child: ListView(
                       // This next line does the trick.
                       scrollDirection: Axis.horizontal,
                       children: <Widget>[
                         Container(
-                          child: hourlyweather(DateFormat("ha").format(DateTime.now()).toString(), hourtemp1)
-                        ),
+                            child: hourlyweather(
+                                DateFormat("ha")
+                                    .format(DateTime.now())
+                                    .toString(),
+                                hourtemp1,
+                                hourweather1)),
                         SizedBox(width: 7),
                         Container(
-                          child: hourlyweather(DateFormat("ha").format(DateTime.now().add(Duration(hours: 1))).toString(), hourtemp2)
-                        ),
+                            child: hourlyweather(
+                                DateFormat("ha")
+                                    .format(
+                                        DateTime.now().add(Duration(hours: 1)))
+                                    .toString(),
+                                hourtemp2,
+                                hourweather2)),
                         SizedBox(width: 7),
                         Container(
-                          child: hourlyweather(DateFormat("ha").format(DateTime.now().add(Duration(hours: 2))).toString(), hourtemp3)
-                        ),
+                            child: hourlyweather(
+                                DateFormat("ha")
+                                    .format(
+                                        DateTime.now().add(Duration(hours: 2)))
+                                    .toString(),
+                                hourtemp3,
+                                hourweather3)),
                         SizedBox(width: 7),
                         Container(
-                          child: hourlyweather(DateFormat("ha").format(DateTime.now().add(Duration(hours: 3))).toString(), hourtemp4)
-                        ),
+                            child: hourlyweather(
+                                DateFormat("ha")
+                                    .format(
+                                        DateTime.now().add(Duration(hours: 3)))
+                                    .toString(),
+                                hourtemp4,
+                                hourweather4)),
                         SizedBox(width: 7),
                         Container(
-                          child: hourlyweather(DateFormat("ha").format(DateTime.now().add(Duration(hours: 4))).toString(), hourtemp5)
-                        ),
+                            child: hourlyweather(
+                                DateFormat("ha")
+                                    .format(
+                                        DateTime.now().add(Duration(hours: 4)))
+                                    .toString(),
+                                hourtemp5,
+                                hourweather5)),
                         SizedBox(width: 7),
                         Container(
-                          child: hourlyweather(DateFormat("ha").format(DateTime.now().add(Duration(hours: 5))).toString(), hourtemp6)
-                        ),
+                            child: hourlyweather(
+                                DateFormat("ha")
+                                    .format(
+                                        DateTime.now().add(Duration(hours: 5)))
+                                    .toString(),
+                                hourtemp6,
+                                hourweather6)),
                         SizedBox(width: 7),
                         Container(
-                          child: hourlyweather(DateFormat("ha").format(DateTime.now().add(Duration(hours: 6))).toString(), hourtemp7)
-                        ),
+                            child: hourlyweather(
+                                DateFormat("ha")
+                                    .format(
+                                        DateTime.now().add(Duration(hours: 6)))
+                                    .toString(),
+                                hourtemp7,
+                                hourweather7)),
                         SizedBox(width: 7),
                         Container(
-                          child: hourlyweather(DateFormat("ha").format(DateTime.now().add(Duration(hours: 7))).toString(), hourtemp8)
-                        ),
+                            child: hourlyweather(
+                                DateFormat("ha")
+                                    .format(
+                                        DateTime.now().add(Duration(hours: 7)))
+                                    .toString(),
+                                hourtemp8,
+                                hourweather9)),
                         SizedBox(width: 7),
                         Container(
-                          child: hourlyweather(DateFormat("ha").format(DateTime.now().add(Duration(hours: 8))).toString(), hourtemp9)
-                        ),
+                            child: hourlyweather(
+                                DateFormat("ha")
+                                    .format(
+                                        DateTime.now().add(Duration(hours: 8)))
+                                    .toString(),
+                                hourtemp9,
+                                hourweather9)),
                         SizedBox(width: 7),
                         Container(
-                          child: hourlyweather(DateFormat("ha").format(DateTime.now().add(Duration(hours: 9))).toString(), hourtemp10)
-                        ),
+                            child: hourlyweather(
+                                DateFormat("ha")
+                                    .format(
+                                        DateTime.now().add(Duration(hours: 9)))
+                                    .toString(),
+                                hourtemp10,
+                                hourweather10)),
                         SizedBox(width: 7),
                         Container(
-                          child: hourlyweather(DateFormat("ha").format(DateTime.now().add(Duration(hours: 10))).toString(), hourtemp11)
-                        ),
-
+                            child: hourlyweather(
+                                DateFormat("ha")
+                                    .format(
+                                        DateTime.now().add(Duration(hours: 10)))
+                                    .toString(),
+                                hourtemp11,
+                                hourweather11)),
                       ],
                     ),
                   ),
@@ -557,21 +617,21 @@ class _HomeScreenState extends State<HomeScreen> {
                           children: [
                             forecastWidget(
                                 day: "Day 1",
-                                isSunny: isSunny,
+                                weatherIcon: day1state,
                                 temp: 'Avg: ' + forecastda1 + '°C',
                                 tempHigh: 'Max: ' + forecastd1 + '°C',
                                 tempLow: 'Min: ' + forecastdm1 + '°C'),
                             SizedBox(width: 7),
                             forecastWidget(
                                 day: "Day 2",
-                                isSunny: isSunny,
+                                weatherIcon: day2state,
                                 temp: 'Avg: ' + forecastda2 + '°C',
                                 tempHigh: 'Max: ' + forecastd2 + '°C',
                                 tempLow: 'Min: ' + forecastdm2 + '°C'),
                             SizedBox(width: 7),
                             forecastWidget(
                                 day: "Day 3",
-                                isSunny: isSunny,
+                                weatherIcon: day3state,
                                 temp: 'Avg: ' + forecastda3 + '°C',
                                 tempHigh: 'Max: ' + forecastd3 + '°C',
                                 tempLow: 'Min: ' + forecastdm3 + '°C'),
@@ -632,7 +692,7 @@ class _HomeScreenState extends State<HomeScreen> {
         Navigator.push(
             context,
             PageRouteBuilder(
-                pageBuilder: (context, animation1, animation2) => fulldetail(),
+                pageBuilder: (context, animation1, animation2) => fullDetail(),
                 transitionDuration: Duration.zero,
                 reverseTransitionDuration: Duration.zero));
       } else if (_selectedIndex == 2) {

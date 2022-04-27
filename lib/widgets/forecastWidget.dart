@@ -1,31 +1,55 @@
 // ignore_for_file: prefer_const_constructors
-import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:weather/services/custom_icons_icons.dart';
 
-Widget forecastWidget({required String day,
-  required bool isSunny,
-  required String temp,
-  required String tempHigh,
-  required String tempLow}) {
+Widget forecastWidget(
+    {required String day,
+    required String weatherIcon,
+    required String temp,
+    required String tempHigh,
+    required String tempLow}) {
   return Container(
       child: Column(
-        children: [
-          isSunny ? Icon(Icons.sunny, size: 20, color: Colors.yellow,) : Icon(
-            Icons.cloud, size: 20, color: Colors.grey,),
-          Text(day, style: GoogleFonts.montserrat(
-              textStyle: TextStyle(
-                  fontSize: 10, color: Colors.black)),),
-          Text(temp, style: GoogleFonts.montserrat(
-              textStyle: TextStyle(
-                  fontSize: 10, color: Colors.black)),),
-          Text(tempHigh, style: GoogleFonts.montserrat(
-              textStyle: TextStyle(
-                  fontSize: 10, color: Colors.black)),),
-          Text(tempLow, style: GoogleFonts.montserrat(
-              textStyle: TextStyle(
-                  fontSize: 10, color: Colors.black)),),
-          
-        ],
-      )
-  );
+    children: [
+      if (weatherIcon == "Clouds")
+        Icon(
+          CustomIcons.cloud_inv,
+          size: 30.0,
+          color: Colors.grey,
+        ),
+      if (weatherIcon == "Clear")
+        Icon(
+          CustomIcons.sun_inv,
+          size: 30.0,
+          color: Colors.yellow,
+        ),
+      if (weatherIcon == "Rain")
+        Icon(
+          CustomIcons.rain_inv,
+          size: 30.0,
+          color: Colors.blue,
+        ),
+      Text(
+        day,
+        style: GoogleFonts.montserrat(
+            textStyle: TextStyle(fontSize: 10, color: Colors.black)),
+      ),
+      Text(
+        temp,
+        style: GoogleFonts.montserrat(
+            textStyle: TextStyle(fontSize: 10, color: Colors.black)),
+      ),
+      Text(
+        tempHigh,
+        style: GoogleFonts.montserrat(
+            textStyle: TextStyle(fontSize: 10, color: Colors.black)),
+      ),
+      Text(
+        tempLow,
+        style: GoogleFonts.montserrat(
+            textStyle: TextStyle(fontSize: 10, color: Colors.black)),
+      ),
+    ],
+  ));
 }

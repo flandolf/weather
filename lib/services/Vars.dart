@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 String hourtemp1 = "";
 String hourtemp2 = "";
 String hourtemp3 = "";
