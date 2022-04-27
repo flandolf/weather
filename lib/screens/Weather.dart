@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'HomeScreeen.dart';
-import 'Info.dart';
+import 'package:weather/screens/Info.dart';
+import 'package:weather/homeScreen.dart';
+import 'package:weather/screens/Weather.dart';
 
 class fulldetail extends StatefulWidget {
   const fulldetail({Key? key}) : super(key: key);

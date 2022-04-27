@@ -1,14 +1,16 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, prefer_final_fields, avoid_print, unused_field
 import 'dart:convert';
-import 'package:weather/hourlyweatherwidget.dart';
+import 'package:intl/intl.dart';
+import 'package:weather/services/hourVars.dart';
+import 'package:weather/widgets/hourlyWeatherWidget.dart';
 import 'package:weather/secrets.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:weather/Info.dart';
-import 'package:weather/Weather.dart';
-import 'package:weather/forecastwidget.dart';
+import 'package:weather/screens/Info.dart';
+import 'package:weather/screens/Weather.dart';
+import 'package:weather/widgets/forecastWidget.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -42,18 +44,69 @@ var forecastdm2 = "";
 var forecastdm3 = "";
 var forecastdm4 = "";
 var forecastdm5 = "";
+bool over12 = false;
+bool over12am = false;
+int time2 = 0;
+int rawTime = 0;
+String time = "0";
 bool isSunny = false;
+Future<String> getTime() async {
+  var now = DateTime.now();
+  return now.hour.toString();
+}
+Future<int> getTimeInt() async {
+  var now = DateTime.now();
+  return now.hour;
+
+}
+
 
 class _HomeScreenState extends State<HomeScreen> {
+
+  Future fetchAll() async {
+    rawTime = await getTimeInt();
+    time = await getTime();
+    time2 = await getTimeInt();
+    if (rawTime > 12) {
+      setState(() {
+        over12 = true;
+        time2 = time2 - 12;
+        time = time2.toString();
+        time = time + "pm";
+      });
+    }
+    else {
+      setState(() {
+        over12 = false;
+        time = time + "am";
+      });
+    }
+    if((rawTime + 12) > 24) {
+      setState(() {
+        over12am = true;
+      });
+    }
+    print(time2);
+    print(time);
+    print(rawTime);
+    print(over12);
+    print(over12am);
+
+    getLocation();
+    fetchWeather();
+    fetchHourly();
+    fetchForecast();
+    fetchCurrent();
+  }
+
   @override
   void initState() {
+    getLocation();
+
+    fetchAll();
     super.initState();
     getLocation();
-    getLocation();
-    for (int i = 0; i < 5; i++) {
-      getLocation();
-      fetchAll();
-    }
+    fetchAll();
   }
 
   getLocation() async {
@@ -98,14 +151,29 @@ class _HomeScreenState extends State<HomeScreen> {
       throw Exception('Failed to load weather');
     }
   }
-
+  Future fetchWeather() async {
+    final response = await http.get(Uri.parse(
+        'https://api.openweathermap.org/data/2.5/weather?lat=$lat&lon=$longitude&appid=$apikey&units=metric'));
+    if (response.statusCode == 200) {
+      var jsonData = response.body;
+      var parsedJson = json.decode(jsonData);
+      print(
+          '-------------------Start JSON---------------------\nwith data: $lat as lat and $longitude as long');
+      print(parsedJson);
+      print('-------------------End JSON-----------------------');
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to load weather');
+    }
+  }
   Future fetchForecast() async {
     print('made it here');
     var uri =
         'https://api.openweathermap.org/data/2.5/forecast?lat=$lat&lon=$longitude&appid=$apikey&units=metric';
     final response = await http.get(Uri.parse(uri));
     print('-------------------Start JSON---------------------');
-    json.decode(response.body);
+    print(json.decode(response.body));
     print('-------------------End JSON-----------------------');
     if (response.statusCode == 200) {
       var forecastJson = response.body;
@@ -129,10 +197,45 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  Future fetchAll() async {
-    getLocation();
-    fetchForecast();
-    fetchCurrent();
+  Future fetchHourly() async {
+    var uri =
+        "https://api.openweathermap.org/data/2.5/onecall?lat=$lat&lon=$longitude&exclude=minutely,daily,alerts,current&appid=$apikey&units=metric";
+    final response = await http.get(Uri.parse(uri));
+    print('-------------------Start JSON---------------------');
+    print(json.decode(response.body));
+    print('-------------------End JSON-----------------------');
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to load weather');
+    } else if (response.statusCode == 200) {
+      var decodedjson = json.decode(response.body);
+      setState(() {
+        hourtemp1 = decodedjson['hourly'][0]['temp'].round().toString();
+        hourtemp2 = decodedjson['hourly'][1]['temp'].round().toString();
+        hourtemp3 = decodedjson['hourly'][2]['temp'].round().toString();
+        hourtemp4 = decodedjson['hourly'][3]['temp'].round().toString();
+        hourtemp5 = decodedjson['hourly'][4]['temp'].round().toString();
+        hourtemp6 = decodedjson['hourly'][5]['temp'].round().toString();
+        hourtemp7 = decodedjson['hourly'][6]['temp'].round().toString();
+        hourtemp8 = decodedjson['hourly'][7]['temp'].round().toString();
+        hourtemp9 = decodedjson['hourly'][8]['temp'].round().toString();
+        hourtemp10 = decodedjson['hourly'][9]['temp'].round().toString();
+        hourtemp11 = decodedjson['hourly'][10]['temp'].round().toString();
+        hourtemp12 = decodedjson['hourly'][11]['temp'].round().toString();
+        hourweather1 = decodedjson['hourly'][0]['weather'][0]['main'];
+        hourweather2 = decodedjson['hourly'][1]['weather'][0]['main'];
+        hourweather3 = decodedjson['hourly'][2]['weather'][0]['main'];
+        hourweather4 = decodedjson['hourly'][3]['weather'][0]['main'];
+        hourweather5 = decodedjson['hourly'][4]['weather'][0]['main'];
+        hourweather6 = decodedjson['hourly'][5]['weather'][0]['main'];
+        hourweather7 = decodedjson['hourly'][6]['weather'][0]['main'];
+        hourweather8 = decodedjson['hourly'][7]['weather'][0]['main'];
+        hourweather9 = decodedjson['hourly'][8]['weather'][0]['main'];
+        hourweather10 = decodedjson['hourly'][9]['weather'][0]['main'];
+        hourweather11 = decodedjson['hourly'][10]['weather'][0]['main'];
+        hourweather12 = decodedjson['hourly'][11]['weather'][0]['main'];
+      });
+    }
   }
 
   int _selectedIndex = 0;
@@ -209,8 +312,8 @@ class _HomeScreenState extends State<HomeScreen> {
           Container(
             margin: EdgeInsets.only(left: 10, top: 10, right: 10, bottom: 10),
             padding: EdgeInsets.all(10),
-            width: 800,
-            height: 442,
+            width: 870,
+            height: 500,
             decoration: BoxDecoration(
               color: Colors.white.withOpacity(0.2),
               borderRadius: BorderRadius.only(
@@ -292,6 +395,83 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                 ),
+                Container(
+                  margin:
+                      EdgeInsets.only(left: 10, top: 10, right: 10, bottom: 10),
+                  padding: EdgeInsets.all(10),
+                  width: 700,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(10),
+                        topRight: Radius.circular(10),
+                        bottomLeft: Radius.circular(10),
+                        bottomRight: Radius.circular(10)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.5),
+                        spreadRadius: 5,
+                        blurRadius: 7,
+                        offset: Offset(0, 3), // changes position of shadow
+                      ),
+                    ],
+                  ),
+                  child: Container(
+                    height: 60.0,
+                    child: ListView(
+                      // This next line does the trick.
+                      scrollDirection: Axis.horizontal,
+                      children: <Widget>[
+                        Container(
+                          child: hourlyweather(DateFormat("ha").format(DateTime.now()).toString(), hourtemp1)
+                        ),
+                        SizedBox(width: 7),
+                        Container(
+                          child: hourlyweather(DateFormat("ha").format(DateTime.now().add(Duration(hours: 1))).toString(), hourtemp2)
+                        ),
+                        SizedBox(width: 7),
+                        Container(
+                          child: hourlyweather(DateFormat("ha").format(DateTime.now().add(Duration(hours: 2))).toString(), hourtemp3)
+                        ),
+                        SizedBox(width: 7),
+                        Container(
+                          child: hourlyweather(DateFormat("ha").format(DateTime.now().add(Duration(hours: 3))).toString(), hourtemp4)
+                        ),
+                        SizedBox(width: 7),
+                        Container(
+                          child: hourlyweather(DateFormat("ha").format(DateTime.now().add(Duration(hours: 4))).toString(), hourtemp5)
+                        ),
+                        SizedBox(width: 7),
+                        Container(
+                          child: hourlyweather(DateFormat("ha").format(DateTime.now().add(Duration(hours: 5))).toString(), hourtemp6)
+                        ),
+                        SizedBox(width: 7),
+                        Container(
+                          child: hourlyweather(DateFormat("ha").format(DateTime.now().add(Duration(hours: 6))).toString(), hourtemp7)
+                        ),
+                        SizedBox(width: 7),
+                        Container(
+                          child: hourlyweather(DateFormat("ha").format(DateTime.now().add(Duration(hours: 7))).toString(), hourtemp8)
+                        ),
+                        SizedBox(width: 7),
+                        Container(
+                          child: hourlyweather(DateFormat("ha").format(DateTime.now().add(Duration(hours: 8))).toString(), hourtemp9)
+                        ),
+                        SizedBox(width: 7),
+                        Container(
+                          child: hourlyweather(DateFormat("ha").format(DateTime.now().add(Duration(hours: 9))).toString(), hourtemp10)
+                        ),
+                        SizedBox(width: 7),
+                        Container(
+                          child: hourlyweather(DateFormat("ha").format(DateTime.now().add(Duration(hours: 10))).toString(), hourtemp11)
+                        ),
+
+                      ],
+                    ),
+                  ),
+                ),
+                //horizontal scrollbar
+
                 Text(
                   "Today's Forecast",
                   style: GoogleFonts.montserrat(

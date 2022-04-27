@@ -1,10 +1,9 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
-
-import 'HomeScreeen.dart';
-import 'Info.dart';
-import 'Weather.dart';
+import 'package:weather/screens/Info.dart';
+import 'package:weather/homeScreen.dart';
+import 'package:weather/screens/Weather.dart';
 int style = 0;
 bool styleSelect = true;
 class InfoScreen extends StatefulWidget {
