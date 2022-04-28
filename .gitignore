@@ -1,6 +1,6 @@
 # Miscellaneous
 #others
-/lib/secrets.dart
+/lib/services/secrets.dart
 
 *.class
 *.log

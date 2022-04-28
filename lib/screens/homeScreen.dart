@@ -9,7 +9,7 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:weather/screens/Info.dart';
 import 'package:weather/screens/Weather.dart';
-import 'package:weather/secrets.dart';
+import 'package:weather/services/secrets.dart';
 import 'package:weather/services/Vars.dart';
 import 'package:weather/services/custom_icons_icons.dart';
 import 'package:weather/widgets/forecastWidget.dart';
@@ -115,6 +115,7 @@ class _HomeScreenState extends State<HomeScreen> {
         desiredAccuracy: LocationAccuracy.high);
     List<Placemark> placemark =
         await placemarkFromCoordinates(position.latitude, position.longitude);
+    await fetchAll();
     setState(() {
       lat = position.latitude.toString();
       longitude = position.longitude.toString();
