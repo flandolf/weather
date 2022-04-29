@@ -433,7 +433,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         Container(
                             child: hourlyweather(
                                 DateFormat("ha")
-                                    .format(DateTime.now())
+                                    .format(DateTime.now().add(Duration(hours: 1)))
                                     .toString(),
                                 hourtemp1,
                                 hourweather1)),
@@ -442,7 +442,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: hourlyweather(
                                 DateFormat("ha")
                                     .format(
-                                        DateTime.now().add(Duration(hours: 1)))
+                                        DateTime.now().add(Duration(hours: 2)))
                                     .toString(),
                                 hourtemp2,
                                 hourweather2)),
@@ -451,7 +451,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: hourlyweather(
                                 DateFormat("ha")
                                     .format(
-                                        DateTime.now().add(Duration(hours: 2)))
+                                        DateTime.now().add(Duration(hours: 3)))
                                     .toString(),
                                 hourtemp3,
                                 hourweather3)),
@@ -460,7 +460,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: hourlyweather(
                                 DateFormat("ha")
                                     .format(
-                                        DateTime.now().add(Duration(hours: 3)))
+                                        DateTime.now().add(Duration(hours: 4)))
                                     .toString(),
                                 hourtemp4,
                                 hourweather4)),
@@ -469,7 +469,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: hourlyweather(
                                 DateFormat("ha")
                                     .format(
-                                        DateTime.now().add(Duration(hours: 4)))
+                                        DateTime.now().add(Duration(hours: 5)))
                                     .toString(),
                                 hourtemp5,
                                 hourweather5)),
@@ -478,7 +478,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: hourlyweather(
                                 DateFormat("ha")
                                     .format(
-                                        DateTime.now().add(Duration(hours: 5)))
+                                        DateTime.now().add(Duration(hours: 6)))
                                     .toString(),
                                 hourtemp6,
                                 hourweather6)),
@@ -487,7 +487,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: hourlyweather(
                                 DateFormat("ha")
                                     .format(
-                                        DateTime.now().add(Duration(hours: 6)))
+                                        DateTime.now().add(Duration(hours: 7)))
                                     .toString(),
                                 hourtemp7,
                                 hourweather7)),
@@ -496,7 +496,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: hourlyweather(
                                 DateFormat("ha")
                                     .format(
-                                        DateTime.now().add(Duration(hours: 7)))
+                                        DateTime.now().add(Duration(hours: 8)))
                                     .toString(),
                                 hourtemp8,
                                 hourweather9)),
@@ -505,7 +505,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: hourlyweather(
                                 DateFormat("ha")
                                     .format(
-                                        DateTime.now().add(Duration(hours: 8)))
+                                        DateTime.now().add(Duration(hours: 9)))
                                     .toString(),
                                 hourtemp9,
                                 hourweather9)),
@@ -514,7 +514,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: hourlyweather(
                                 DateFormat("ha")
                                     .format(
-                                        DateTime.now().add(Duration(hours: 9)))
+                                        DateTime.now().add(Duration(hours: 10)))
                                     .toString(),
                                 hourtemp10,
                                 hourweather10)),
@@ -523,10 +523,19 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: hourlyweather(
                                 DateFormat("ha")
                                     .format(
-                                        DateTime.now().add(Duration(hours: 10)))
+                                        DateTime.now().add(Duration(hours: 11)))
                                     .toString(),
                                 hourtemp11,
                                 hourweather11)),
+                        SizedBox(width: 7),
+                        Container(
+                            child: hourlyweather(
+                                DateFormat("ha")
+                                    .format(
+                                    DateTime.now().add(Duration(hours: 12)))
+                                    .toString(),
+                                hourtemp12,
+                                hourweather12)),
                       ],
                     ),
                   ),
