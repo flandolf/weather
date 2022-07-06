@@ -9,6 +9,7 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:weather/screens/Info.dart';
 import 'package:weather/screens/Weather.dart';
+import 'package:weather/screens/newHome.dart';
 import 'package:weather/services/secrets.dart';
 import 'package:weather/services/Vars.dart';
 import 'package:weather/services/custom_icons_icons.dart';
@@ -71,27 +72,6 @@ Future<int> getTimeInt() async {
 
 class _HomeScreenState extends State<HomeScreen> {
   Future fetchAll() async {
-    rawTime = await getTimeInt();
-    time = await getTime();
-    time2 = await getTimeInt();
-    if (rawTime > 12) {
-      setState(() {
-        over12 = true;
-        time2 = time2 - 12;
-        time = time2.toString();
-        time = time + "pm";
-      });
-    } else {
-      setState(() {
-        over12 = false;
-        time = time + "am";
-      });
-    }
-    if ((rawTime + 12) > 24) {
-      setState(() {
-        over12am = true;
-      });
-    }
     getLocation();
     fetchWeather();
     fetchHourly();
@@ -99,28 +79,22 @@ class _HomeScreenState extends State<HomeScreen> {
     fetchCurrent();
   }
 
-  @override
-  void initState() {
-    getLocation();
-
-    fetchAll();
-    super.initState();
-    getLocation();
-    fetchAll();
-  }
-
-  getLocation() async {
+  Future getLocation() async {
     Geolocator.requestPermission();
     Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
     List<Placemark> placemark =
         await placemarkFromCoordinates(position.latitude, position.longitude);
-    await fetchAll();
     setState(() {
       lat = position.latitude.toString();
       longitude = position.longitude.toString();
       currentLocation = placemark[0].locality.toString();
     });
+  }
+  @override
+  void initState() {
+    super.initState();
+    fetchAll();
   }
 
   Future fetchCurrent() async {
@@ -146,6 +120,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Future fetchWeather() async {
     final response = await http.get(Uri.parse(
         'https://api.openweathermap.org/data/2.5/weather?lat=$lat&lon=$longitude&appid=$apikey&units=metric'));
+    print(response.body);
     if (response.statusCode == 200) {
       var jsonData = response.body;
       var decodedjson = json.decode(jsonData);
@@ -238,19 +213,43 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: styleSelect
+        decoration: theme == 'One'
             ? BoxDecoration(
                 gradient: LinearGradient(
                 colors: [Color(0xfffbff29), Color(0xff03a1e9)],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ))
-            : BoxDecoration(
-                gradient: LinearGradient(
-                colors: [Color(0xff3dc1fd), Color(0xffb31148)],
-                begin: Alignment.topRight,
-                end: Alignment.bottomLeft,
-              )),
+            : theme == 'Two'
+                ? BoxDecoration(
+                    gradient: LinearGradient(
+                    colors: [Color(0xff0f0c29), Color(0xff2d2654)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ))
+                : theme == 'Three'
+                    ? BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [Color(0xff4e37ea), Color(0xff048eff)],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                      )
+                    : theme == 'Four'
+                        ? BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [Color(0xff3ece17), Color(0xfff1cf23)],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                          )
+                        : BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [Color(0xff02227e), Color(0xff065596)],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                          ),
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           Text(
             "Weather",
@@ -356,12 +355,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                       fontSize: 15, color: Colors.black)),
                             ),
                             Text(
-                              'Minimum Temp: $mintemp°C',
-                              style: GoogleFonts.montserrat(
-                                  textStyle: TextStyle(
-                                      fontSize: 15, color: Colors.black)),
-                            ),
-                            Text(
                               'Feels Like: $feelsLike°C',
                               style: GoogleFonts.montserrat(
                                   textStyle: TextStyle(
@@ -425,7 +418,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                   child: Container(
-                    height: 80.0,
+                    height: 100.0,
                     child: ListView(
                       // This next line does the trick.
                       scrollDirection: Axis.horizontal,
@@ -433,7 +426,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         Container(
                             child: hourlyweather(
                                 DateFormat("ha")
-                                    .format(DateTime.now().add(Duration(hours: 1)))
+                                    .format(
+                                        DateTime.now().add(Duration(hours: 1)))
                                     .toString(),
                                 hourtemp1,
                                 hourweather1)),
@@ -532,20 +526,13 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: hourlyweather(
                                 DateFormat("ha")
                                     .format(
-                                    DateTime.now().add(Duration(hours: 12)))
+                                        DateTime.now().add(Duration(hours: 12)))
                                     .toString(),
                                 hourtemp12,
                                 hourweather12)),
                       ],
                     ),
                   ),
-                ),
-                //horizontal scrollbar
-
-                Text(
-                  "Today's Forecast",
-                  style: GoogleFonts.montserrat(
-                      textStyle: TextStyle(fontSize: 20, color: Colors.white)),
                 ),
                 Container(
                   margin:
@@ -628,23 +615,23 @@ class _HomeScreenState extends State<HomeScreen> {
                             forecastWidget(
                                 day: "Day 1",
                                 weatherIcon: day1state,
-                                temp: 'Avg: ' + forecastda1 + '°C',
-                                tempHigh: 'Max: ' + forecastd1 + '°C',
-                                tempLow: 'Min: ' + forecastdm1 + '°C'),
+                                temp: 'Avg: $forecastda1°C',
+                                tempHigh: 'Max: $forecastd1°C',
+                                tempLow: 'Min: $forecastdm1°C'),
                             SizedBox(width: 7),
                             forecastWidget(
                                 day: "Day 2",
                                 weatherIcon: day2state,
-                                temp: 'Avg: ' + forecastda2 + '°C',
-                                tempHigh: 'Max: ' + forecastd2 + '°C',
-                                tempLow: 'Min: ' + forecastdm2 + '°C'),
+                                temp: 'Avg: $forecastda2°C',
+                                tempHigh: 'Max: $forecastd2°C',
+                                tempLow: 'Min: $forecastdm2°C'),
                             SizedBox(width: 7),
                             forecastWidget(
                                 day: "Day 3",
                                 weatherIcon: day3state,
-                                temp: 'Avg: ' + forecastda3 + '°C',
-                                tempHigh: 'Max: ' + forecastd3 + '°C',
-                                tempLow: 'Min: ' + forecastdm3 + '°C'),
+                                temp: 'Avg: $forecastda3°C',
+                                tempHigh: 'Max: $forecastd3°C',
+                                tempLow: 'Min: $forecastdm3°C'),
                             SizedBox(width: 7),
                           ],
                         )),
@@ -695,7 +682,7 @@ class _HomeScreenState extends State<HomeScreen> {
         Navigator.push(
             context,
             PageRouteBuilder(
-                pageBuilder: (context, animation1, animation2) => HomeScreen(),
+                pageBuilder: (context, animation1, animation2) => newHome(),
                 transitionDuration: Duration.zero,
                 reverseTransitionDuration: Duration.zero));
       } else if (_selectedIndex == 1) {
