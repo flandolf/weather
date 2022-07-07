@@ -236,11 +236,12 @@ class _newHomeState extends State<newHome> {
           children: [
             Container(
               height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
               color: Color.fromRGBO(61, 61, 61, 1.0),
               child: Column(
                 children: [
                   SizedBox(
-                    height: 70,
+                    height: MediaQuery.of(context).size.height * 0.04,
                   ),
                   Container(
                     width: MediaQuery.of(context).size.width,
@@ -255,7 +256,7 @@ class _newHomeState extends State<newHome> {
                               Text(
                                 '$Temp°C',
                                 style: GoogleFonts.montserrat(
-                                  fontSize: 40,
+                                  fontSize: 45,
                                   fontWeight: FontWeight.w800,
                                   color: Colors.white,
                                 ),
@@ -455,13 +456,13 @@ class _newHomeState extends State<newHome> {
                     ),
                   ),
                   SizedBox(
-                    height: 10,
+                    height: 5,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       SizedBox(
-                        width: 5,
+                        width: 10,
                       ),
                       Text(
                         "Next 3 days",
