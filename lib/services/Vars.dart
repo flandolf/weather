@@ -23,3 +23,25 @@ String hourweather9 = "";
 String hourweather10 = "";
 String hourweather11 = "";
 String hourweather12 = "";
+
+String hourwind1 = "";
+String hourwind2 = "";
+String hourwind3 = "";
+String hourwind4 = "";
+String hourwind5 = "";
+String hourwind6 = "";
+String hourwind7 = "";
+String hourwind8 = "";
+String hourwind9 = "";
+String hourwind10 = "";
+String hourwind11 = "";
+String hourwind12 = "";
+
+String humidity = "";
+String pressure = "";
+String visibility = "";
+String windspeed = "";
+String uvindex = "";
+int sunrise = 0;
+int sunset = 0;
+
