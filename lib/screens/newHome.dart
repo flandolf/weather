@@ -7,6 +7,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:weather/screens/airQuality.dart';
+
 import 'package:weather/services/secrets.dart';
 import 'package:weather/services/Vars.dart';
 import 'package:weather/services/custom_icons_icons.dart';
@@ -64,6 +66,7 @@ Future<int> getTimeInt() async {
 class _newHomeState extends State<newHome> {
   Future fetchAll() async {
     await getLocation();
+    await fetchAirQuality();
     await fetchWeather();
     await fetchHourly();
     await fetchForecast();
@@ -80,6 +83,7 @@ class _newHomeState extends State<newHome> {
       lat = position.latitude.toString();
       longitude = position.longitude.toString();
       currentLocation = placemark[0].locality.toString();
+      location = placemark[0].locality.toString();
     });
   }
 
@@ -107,6 +111,8 @@ class _newHomeState extends State<newHome> {
         uvindex = parsedJson['current']['uvi'].toString();
         sunset = parsedJson['current']['sunset'];
         sunrise = parsedJson['current']['sunrise'];
+        gust = parsedJson['current']['wind_gust'].toString();
+        winddirection = parsedJson['current']['wind_deg'].toString();
       });
     } else {
       // If the server did not return a 200 OK response,
@@ -118,6 +124,29 @@ class _newHomeState extends State<newHome> {
   String unixtoTime(int unixTime) {
     DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(unixTime * 1000);
     return DateFormat.jm().format(dateTime).toString();
+  }
+
+  Future fetchAirQuality() async {
+    final response = await http.get(Uri.parse(
+        'http://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${longitude}&appid=${apikey}'));
+    if (response.statusCode == 200) {
+      var jsonData = response.body;
+      var parsedJson = json.decode(jsonData);
+      print(parsedJson['list'][0]['components']['no2']);
+      setState(() {
+        airQuality = parsedJson['list'][0]['main']['aqi'].toString();
+        co = parsedJson['list'][0]['components']['co'];
+        no2 = parsedJson['list'][0]['components']['no2'];
+        o3 = parsedJson['list'][0]['components']['o3'];
+        pm10 = parsedJson['list'][0]['components']['pm10'];
+        pm25 = parsedJson['list'][0]['components']['pm2_5'];
+        so2 = parsedJson['list'][0]['components']['so2'];
+      });
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to load weather');
+    }
   }
 
   Future fetchWeather() async {
@@ -226,472 +255,538 @@ class _newHomeState extends State<newHome> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: RefreshIndicator(
-        onRefresh: () async {
-          await fetchAll();
-        },
-        child: ListView(
-          scrollDirection: Axis.vertical,
-          padding: EdgeInsets.all(0),
-          clipBehavior: Clip.hardEdge,
-          children: [
-            Container(
-              height: MediaQuery.of(context).size.height,
-              width: MediaQuery.of(context).size.width,
-              color: Color.fromRGBO(61, 61, 61, 1.0),
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.04,
-                  ),
-                  Container(
-                    width: MediaQuery.of(context).size.width,
-                    padding: EdgeInsets.only(left: 10),
-                    child: Row(children: [
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Text(
-                                '$Temp°C',
-                                style: GoogleFonts.montserrat(
-                                  fontSize: 45,
-                                  fontWeight: FontWeight.w800,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              if (weatherState == "Clouds")
-                                Icon(
-                                  CustomIcons.cloud_inv,
-                                  size: 50.0,
-                                  color: Colors.grey,
-                                ),
-                              if (weatherState == "Clear")
-                                Icon(
-                                  CustomIcons.sun_inv,
-                                  size: 50.0,
-                                  color: Colors.yellow,
-                                ),
-                              if (weatherState == "Rain")
-                                Icon(
-                                  CustomIcons.rain_inv,
-                                  size: 50.0,
-                                  color: Colors.blue,
-                                ),
-                              if (weatherState == "Snow")
-                                Icon(
-                                  CustomIcons.snow_inv,
-                                  size: 50.0,
-                                  color: Colors.white,
-                                ),
-                              if (weatherState == "Thunderstorm")
-                                Icon(
-                                  CustomIcons.clouds_flash_inv,
-                                  size: 40.0,
-                                  color: Colors.blue,
-                                ),
-                            ],
-                          ),
-                          Text(
-                            'Feels like $feelsLike°C',
-                            style: GoogleFonts.montserrat(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w400,
-                              color: Color(0xFFB2B2B2),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Spacer(),
-                      Container(
-                        padding: EdgeInsets.only(right: 10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
+          onRefresh: () async {
+            await fetchAll();
+          },
+          child: ListView(
+            scrollDirection: Axis.vertical,
+            padding: EdgeInsets.all(0),
+            clipBehavior: Clip.hardEdge,
+            children: [
+              Container(
+                height: MediaQuery.of(context).size.height,
+                width: MediaQuery.of(context).size.width,
+                color: Color.fromRGBO(38, 38, 38, 1.0),
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.05,
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      padding: EdgeInsets.only(left: 10),
+                      child: Row(children: [
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Icon(
-                              Icons.location_on,
-                              color: Colors.lightBlue,
-                              size: 20,
+                            Row(
+                              children: [
+                                Text(
+                                  '$Temp°C',
+                                  style: GoogleFonts.montserrat(
+                                    fontSize: 45,
+                                    fontWeight: FontWeight.w800,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                if (weatherState == "Clouds")
+                                  Icon(
+                                    CustomIcons.cloud_inv,
+                                    size: 50.0,
+                                    color: Colors.grey,
+                                  ),
+                                if (weatherState == "Clear")
+                                  Icon(
+                                    CustomIcons.sun_inv,
+                                    size: 50.0,
+                                    color: Colors.yellow,
+                                  ),
+                                if (weatherState == "Rain")
+                                  Icon(
+                                    CustomIcons.rain_inv,
+                                    size: 50.0,
+                                    color: Colors.blue,
+                                  ),
+                                if (weatherState == "Snow")
+                                  Icon(
+                                    CustomIcons.snow_inv,
+                                    size: 50.0,
+                                    color: Colors.white,
+                                  ),
+                                if (weatherState == "Thunderstorm")
+                                  Icon(
+                                    CustomIcons.clouds_flash_inv,
+                                    size: 40.0,
+                                    color: Colors.blue,
+                                  ),
+                              ],
                             ),
                             Text(
-                              '$currentLocation',
+                              'Feels like $feelsLike°C',
                               style: GoogleFonts.montserrat(
                                 fontSize: 20,
                                 fontWeight: FontWeight.w400,
-                                color: Colors.white,
+                                color: Color(0xFFB2B2B2),
                               ),
-                            )
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(context , PageRouteBuilder(
+                                  pageBuilder: (c, a1, a2) => airquality(),
+                                  transitionsBuilder: (c, anim, a2, child) => FadeTransition(
+                                    opacity: anim.drive(CurveTween(curve: Curves.easeInOut)),
+                                    child: child,
+                                  ),
+                                  transitionDuration: Duration(milliseconds: 250),
+                                ),);
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+
+                                  color: Colors.white,
+                                ),
+                                padding: EdgeInsets.all(4),
+                                child: Column(
+                                  children: [
+                                    if (airQuality == '1')
+                                      Text("Air Quality: Good",
+                                          style: GoogleFonts.montserrat(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w400,
+                                            color: Colors.green,
+                                          )),
+                                    if (airQuality == '2')
+                                      Text("Air Quality: Fair",
+                                          style: GoogleFonts.montserrat(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w400,
+                                            color: Colors.yellow,
+                                          )),
+                                    if (airQuality == '3')
+                                      Text("Air Quality: Bad",
+                                          style: GoogleFonts.montserrat(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w400,
+                                            color: Colors.orange,
+                                          )),
+                                    if (int.parse(airQuality) > 3)
+                                      Text("Air Quality: Dangerous",
+                                          style: GoogleFonts.montserrat(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w400,
+                                            color: Colors.red[900],
+                                          )),
+                                  ],
+                                )
+
+                              ),
+                              )
                           ],
                         ),
-                      )
-                    ]),
-                  ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: Color(0xFFF57C00),
+                        Spacer(),
+                        Container(
+                          padding: EdgeInsets.only(right: 10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Icon(
+                                Icons.location_on,
+                                color: Colors.lightBlue,
+                                size: 20,
+                              ),
+                              Text(
+                                '$currentLocation',
+                                style: GoogleFonts.montserrat(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w400,
+                                  color: Colors.white,
+                                ),
+                              )
+                            ],
+                          ),
+                        )
+                      ]),
                     ),
-                    margin: EdgeInsets.all(10),
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                    height: MediaQuery.of(context).size.height * 0.18,
-                    width: MediaQuery.of(context).size.width,
-                    child: ListView(
-                      scrollDirection: Axis.horizontal,
-                      children: <Widget>[
-                        Container(
-                            child: hourlyweather(
-                                DateFormat("ha")
-                                    .format(DateTime.now().add(Duration(hours: 1)))
-                                    .toString(),
-                                hourtemp1,
-                                hourweather1,
-                                hourwind1)),
-                        SizedBox(width: 7),
-                        Container(
-                            child: hourlyweather(
-                                DateFormat("ha")
-                                    .format(DateTime.now().add(Duration(hours: 2)))
-                                    .toString(),
-                                hourtemp2,
-                                hourweather2,
-                                hourwind2)),
-                        SizedBox(width: 7),
-                        Container(
-                            child: hourlyweather(
-                                DateFormat("ha")
-                                    .format(DateTime.now().add(Duration(hours: 3)))
-                                    .toString(),
-                                hourtemp3,
-                                hourweather3,
-                                hourwind3)),
-                        SizedBox(width: 7),
-                        Container(
-                            child: hourlyweather(
-                                DateFormat("ha")
-                                    .format(DateTime.now().add(Duration(hours: 4)))
-                                    .toString(),
-                                hourtemp4,
-                                hourweather4,
-                                hourwind4)),
-                        SizedBox(width: 7),
-                        Container(
-                            child: hourlyweather(
-                                DateFormat("ha")
-                                    .format(DateTime.now().add(Duration(hours: 5)))
-                                    .toString(),
-                                hourtemp5,
-                                hourweather5,
-                                hourwind5)),
-                        SizedBox(width: 7),
-                        Container(
-                            child: hourlyweather(
-                                DateFormat("ha")
-                                    .format(DateTime.now().add(Duration(hours: 6)))
-                                    .toString(),
-                                hourtemp6,
-                                hourweather6,
-                                hourwind6)),
-                        SizedBox(width: 7),
-                        Container(
-                            child: hourlyweather(
-                                DateFormat("ha")
-                                    .format(DateTime.now().add(Duration(hours: 7)))
-                                    .toString(),
-                                hourtemp7,
-                                hourweather7,
-                                hourwind7)),
-                        SizedBox(width: 7),
-                        Container(
-                            child: hourlyweather(
-                                DateFormat("ha")
-                                    .format(DateTime.now().add(Duration(hours: 8)))
-                                    .toString(),
-                                hourtemp8,
-                                hourweather8,
-                                hourwind8)),
-                        SizedBox(width: 7),
-                        Container(
-                            child: hourlyweather(
-                                DateFormat("ha")
-                                    .format(DateTime.now().add(Duration(hours: 9)))
-                                    .toString(),
-                                hourtemp9,
-                                hourweather9,
-                                hourwind9)),
-                        SizedBox(width: 7),
-                        Container(
-                            child: hourlyweather(
-                                DateFormat("ha")
-                                    .format(DateTime.now().add(Duration(hours: 10)))
-                                    .toString(),
-                                hourtemp10,
-                                hourweather10,
-                                hourwind10)),
-                        SizedBox(width: 7),
-                        Container(
-                            child: hourlyweather(
-                                DateFormat("ha")
-                                    .format(DateTime.now().add(Duration(hours: 11)))
-                                    .toString(),
-                                hourtemp11,
-                                hourweather11,
-                                hourwind11)),
-                        SizedBox(width: 7),
-                        Container(
-                            child: hourlyweather(
-                                DateFormat("ha")
-                                    .format(DateTime.now().add(Duration(hours: 12)))
-                                    .toString(),
-                                hourtemp12,
-                                hourweather12,
-                                hourwind12)),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: Color(0xFFF57C00),
+                      ),
+                      margin: EdgeInsets.all(10),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                      height: MediaQuery.of(context).size.height * 0.18,
+                      width: MediaQuery.of(context).size.width,
+                      child: ListView(
+                        scrollDirection: Axis.horizontal,
+                        children: <Widget>[
+                          Container(
+                              child: hourlyweather(
+                                  DateFormat("ha")
+                                      .format(DateTime.now()
+                                          .add(Duration(hours: 1)))
+                                      .toString(),
+                                  hourtemp1,
+                                  hourweather1,
+                                  hourwind1)),
+                          SizedBox(width: 7),
+                          Container(
+                              child: hourlyweather(
+                                  DateFormat("ha")
+                                      .format(DateTime.now()
+                                          .add(Duration(hours: 2)))
+                                      .toString(),
+                                  hourtemp2,
+                                  hourweather2,
+                                  hourwind2)),
+                          SizedBox(width: 7),
+                          Container(
+                              child: hourlyweather(
+                                  DateFormat("ha")
+                                      .format(DateTime.now()
+                                          .add(Duration(hours: 3)))
+                                      .toString(),
+                                  hourtemp3,
+                                  hourweather3,
+                                  hourwind3)),
+                          SizedBox(width: 7),
+                          Container(
+                              child: hourlyweather(
+                                  DateFormat("ha")
+                                      .format(DateTime.now()
+                                          .add(Duration(hours: 4)))
+                                      .toString(),
+                                  hourtemp4,
+                                  hourweather4,
+                                  hourwind4)),
+                          SizedBox(width: 7),
+                          Container(
+                              child: hourlyweather(
+                                  DateFormat("ha")
+                                      .format(DateTime.now()
+                                          .add(Duration(hours: 5)))
+                                      .toString(),
+                                  hourtemp5,
+                                  hourweather5,
+                                  hourwind5)),
+                          SizedBox(width: 7),
+                          Container(
+                              child: hourlyweather(
+                                  DateFormat("ha")
+                                      .format(DateTime.now()
+                                          .add(Duration(hours: 6)))
+                                      .toString(),
+                                  hourtemp6,
+                                  hourweather6,
+                                  hourwind6)),
+                          SizedBox(width: 7),
+                          Container(
+                              child: hourlyweather(
+                                  DateFormat("ha")
+                                      .format(DateTime.now()
+                                          .add(Duration(hours: 7)))
+                                      .toString(),
+                                  hourtemp7,
+                                  hourweather7,
+                                  hourwind7)),
+                          SizedBox(width: 7),
+                          Container(
+                              child: hourlyweather(
+                                  DateFormat("ha")
+                                      .format(DateTime.now()
+                                          .add(Duration(hours: 8)))
+                                      .toString(),
+                                  hourtemp8,
+                                  hourweather8,
+                                  hourwind8)),
+                          SizedBox(width: 7),
+                          Container(
+                              child: hourlyweather(
+                                  DateFormat("ha")
+                                      .format(DateTime.now()
+                                          .add(Duration(hours: 9)))
+                                      .toString(),
+                                  hourtemp9,
+                                  hourweather9,
+                                  hourwind9)),
+                          SizedBox(width: 7),
+                          Container(
+                              child: hourlyweather(
+                                  DateFormat("ha")
+                                      .format(DateTime.now()
+                                          .add(Duration(hours: 10)))
+                                      .toString(),
+                                  hourtemp10,
+                                  hourweather10,
+                                  hourwind10)),
+                          SizedBox(width: 7),
+                          Container(
+                              child: hourlyweather(
+                                  DateFormat("ha")
+                                      .format(DateTime.now()
+                                          .add(Duration(hours: 11)))
+                                      .toString(),
+                                  hourtemp11,
+                                  hourweather11,
+                                  hourwind11)),
+                          SizedBox(width: 7),
+                          Container(
+                              child: hourlyweather(
+                                  DateFormat("ha")
+                                      .format(DateTime.now()
+                                          .add(Duration(hours: 12)))
+                                      .toString(),
+                                  hourtemp12,
+                                  hourweather12,
+                                  hourwind12)),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          color: Color(0xFFF57C00),
+                        ),
+                        width: MediaQuery.of(context).size.width,
+                        margin: EdgeInsets.all(7),
+                        padding: EdgeInsets.all(5),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                                child: forecastWidget(
+                                    day: "Day 1",
+                                    weatherIcon: day1state,
+                                    temp: "Avg: $forecastda1°C",
+                                    tempHigh: "Max: $forecastd1°C",
+                                    tempLow: "Min: $forecastdm1°C")),
+                            Container(
+                                child: forecastWidget(
+                                    day: "Day 2",
+                                    weatherIcon: day2state,
+                                    temp: "Avg: $forecastda2°C",
+                                    tempHigh: "Max: $forecastd2°C",
+                                    tempLow: "Min: $forecastdm2°C")),
+                            Container(
+                                child: forecastWidget(
+                                    day: "Day 3",
+                                    weatherIcon: day3state,
+                                    temp: "Avg: $forecastda3°C",
+                                    tempHigh: "Max: $forecastd3°C",
+                                    tempLow: "Min: $forecastdm3°C")),
+                          ],
+                        )),
+                    Container(
+                        margin: EdgeInsets.all(10),
+                        padding: EdgeInsets.all(5),
+                        height: MediaQuery.of(context).size.height * 0.2,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          color: Color(0xFFF57C00),
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                                width:
+                                    (MediaQuery.of(context).size.width - 40) /
+                                        2,
+                                padding: EdgeInsets.all(5),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                  color: Colors.blue,
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text("Humidity",
+                                        style: GoogleFonts.montserrat(
+                                            textStyle: TextStyle(
+                                                fontSize: 17,
+                                                color: Colors.white))),
+                                    Text("${humidity}%",
+                                        style: GoogleFonts.montserrat(
+                                            textStyle: TextStyle(
+                                                fontSize: 15,
+                                                color: Colors.white))),
+                                    Text("Wind",
+                                        style: GoogleFonts.montserrat(
+                                            textStyle: TextStyle(
+                                                fontSize: 17,
+                                                color: Colors.white))),
+                                    Text("${windspeed}m/s",
+                                        style: GoogleFonts.montserrat(
+                                            textStyle: TextStyle(
+                                                fontSize: 15,
+                                                color: Colors.white))),
+                                    Text("Pressure",
+                                        style: GoogleFonts.montserrat(
+                                            textStyle: TextStyle(
+                                                fontSize: 17,
+                                                color: Colors.white))),
+                                    Text("${pressure}hPa",
+                                        style: GoogleFonts.montserrat(
+                                            textStyle: TextStyle(
+                                                fontSize: 15,
+                                                color: Colors.white))),
+                                  ],
+                                )),
+                            SizedBox(
+                              width: 5,
+                            ),
+                            Container(
+                                width:
+                                    (MediaQuery.of(context).size.width - 40) /
+                                        2,
+                                padding: EdgeInsets.all(5),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                  color: Colors.blue[300],
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(CustomIcons.sunrise,
+                                            color: Colors.yellow, size: 25),
+                                        Text("Sunrise",
+                                            style: GoogleFonts.montserrat(
+                                                textStyle: TextStyle(
+                                                    fontSize: 20,
+                                                    color: Colors.white))),
+                                      ],
+                                    ),
+                                    Text("${unixtoTime(sunrise)}",
+                                        style: GoogleFonts.montserrat(
+                                            textStyle: TextStyle(
+                                                fontSize: 20,
+                                                color: Colors.white))),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(CustomIcons.moon,
+                                            color: Colors.yellow, size: 25),
+                                        Text("Sunset",
+                                            style: GoogleFonts.montserrat(
+                                                textStyle: TextStyle(
+                                                    fontSize: 20,
+                                                    color: Colors.white))),
+                                      ],
+                                    ),
+                                    Text("${unixtoTime(sunset)}",
+                                        style: GoogleFonts.montserrat(
+                                            textStyle: TextStyle(
+                                                fontSize: 20,
+                                                color: Colors.white))),
+                                  ],
+                                )),
+                          ],
+                        )),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ElevatedButton(
+                            onPressed: () {
+                              showModalBottomSheet(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return (Container(
+                                        height: 200,
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(20)),
+                                        ),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            SizedBox(
+                                              height: 10,
+                                            ),
+                                            Text("Weather App",
+                                                style: GoogleFonts.rubik(
+                                                    textStyle: TextStyle(
+                                                        fontSize: 20,
+                                                        color: Colors.black))),
+                                            SizedBox(height: 10),
+                                            Text("Data from OpenWeatherMap",
+                                                style: GoogleFonts.montserrat(
+                                                    textStyle: TextStyle(
+                                                        fontSize: 15,
+                                                        color: Colors.black))),
+                                            SizedBox(height: 10),
+                                            Text("Made with ❤ by dumpy",
+                                                style: GoogleFonts.montserrat(
+                                                    textStyle: TextStyle(
+                                                        fontSize: 15,
+                                                        color: Colors.black))),
+                                            SizedBox(height: 10),
+                                            Text("Version 4.2.3",
+                                                style: GoogleFonts.montserrat(
+                                                    textStyle: TextStyle(
+                                                        fontSize: 15,
+                                                        color: Colors.black))),
+                                            ElevatedButton(
+                                                onPressed: () {
+                                                  showDialog(
+                                                    context: context,
+                                                    builder: (BuildContext
+                                                            context) =>
+                                                        _buildPopupDialog(
+                                                            context),
+                                                  );
+                                                },
+                                                child: Text("Click Me!")),
+                                          ],
+                                        )));
+                                  });
+                            },
+                            child: Row(
+                              children: [
+                                Icon(Icons.info),
+                                SizedBox(
+                                  width: 3,
+                                ),
+                                Text('Info')
+                              ],
+                            )),
+                        SizedBox(width: 4),
+                        ElevatedButton(
+                            onPressed: fetchAll,
+                            child: Row(
+                              children: [
+                                Icon(Icons.refresh),
+                                SizedBox(
+                                  width: 3,
+                                ),
+                                Text('Refresh')
+                              ],
+                            )),
                       ],
                     ),
-                  ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Text(
-                        "Next 3 days",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 30,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        color: Color(0xFFF57C00),
-                      ),
-                      width: MediaQuery.of(context).size.width,
-                      margin: EdgeInsets.all(10),
-                      padding: EdgeInsets.all(5),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                              child: forecastWidget(
-                                  day: "Day 1",
-                                  weatherIcon: day1state,
-                                  temp: "Avg: $forecastda1°C",
-                                  tempHigh: "Max: $forecastd1°C",
-                                  tempLow: "Min: $forecastdm1°C")),
-                          Container(
-                              child: forecastWidget(
-                                  day: "Day 2",
-                                  weatherIcon: day2state,
-                                  temp: "Avg: $forecastda2°C",
-                                  tempHigh: "Max: $forecastd2°C",
-                                  tempLow: "Min: $forecastdm2°C")),
-                          Container(
-                              child: forecastWidget(
-                                  day: "Day 3",
-                                  weatherIcon: day3state,
-                                  temp: "Avg: $forecastda3°C",
-                                  tempHigh: "Max: $forecastd3°C",
-                                  tempLow: "Min: $forecastdm3°C")),
-                        ],
-                      )),
-                  Container(
-                      margin: EdgeInsets.all(10),
-                      padding: EdgeInsets.all(5),
-                      height: MediaQuery.of(context).size.height * 0.2,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        color: Color(0xFFF57C00),
-                      ),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Container(
-                              width: (MediaQuery.of(context).size.width - 40) / 2,
-                              padding: EdgeInsets.all(5),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                color: Colors.blue,
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text("Humidity",
-                                      style: GoogleFonts.montserrat(
-                                          textStyle: TextStyle(
-                                              fontSize: 17, color: Colors.white))),
-                                  Text("${humidity}%", style: GoogleFonts.montserrat(
-                                      textStyle: TextStyle(
-                                          fontSize: 15, color: Colors.white))),
-                                  Text("Wind",
-                                      style: GoogleFonts.montserrat(
-                                          textStyle: TextStyle(
-                                              fontSize: 17, color: Colors.white))),
-                                  Text("${windspeed}m/s", style: GoogleFonts.montserrat(
-                                      textStyle: TextStyle(
-                                          fontSize: 15, color: Colors.white))),
-                                  Text("Pressure",
-                                      style: GoogleFonts.montserrat(
-                                          textStyle: TextStyle(
-                                              fontSize: 17, color: Colors.white))),
-                                  Text("${pressure}hPa", style: GoogleFonts.montserrat(
-                                      textStyle: TextStyle(
-                                          fontSize: 15, color: Colors.white))),
-                                ],
-                              )),
-                          SizedBox(
-                            width: 5,
-                          ),
-                          Container(
-                              width: (MediaQuery.of(context).size.width - 40) / 2,
-                              padding: EdgeInsets.all(5),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                color: Colors.blue[300],
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(CustomIcons.sunrise,
-                                          color: Colors.yellow, size: 25),
-                                      Text("Sunrise",
-                                          style: GoogleFonts.montserrat(
-                                              textStyle: TextStyle(
-                                                  fontSize: 20,
-                                                  color: Colors.white))),
-                                    ],
-                                  ),
-                                  Text("${unixtoTime(sunrise)}",
-                                      style: GoogleFonts.montserrat(
-                                          textStyle: TextStyle(
-                                              fontSize: 20, color: Colors.white))),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(CustomIcons.moon,
-                                          color: Colors.yellow, size: 25),
-                                      Text("Sunset",
-                                          style: GoogleFonts.montserrat(
-                                              textStyle: TextStyle(
-                                                  fontSize: 20,
-                                                  color: Colors.white))),
-                                    ],
-                                  ),
-                                  Text("${unixtoTime(sunset)}",
-                                      style: GoogleFonts.montserrat(
-                                          textStyle: TextStyle(
-                                              fontSize: 20, color: Colors.white))),
-                                ],
-                              )),
-                        ],
-                      )),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ElevatedButton(
-                          onPressed: () {
-                            showModalBottomSheet(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return (Container(
-                                      height: 200,
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius:
-                                        BorderRadius.all(Radius.circular(20)),
-                                      ),
-                                      child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                          Text("Weather App",
-                                              style: GoogleFonts.rubik(
-                                                  textStyle: TextStyle(
-                                                      fontSize: 20,
-                                                      color: Colors.black))),
-                                          SizedBox(height: 10),
-                                          Text("Data from OpenWeatherMap",
-                                              style: GoogleFonts.montserrat(
-                                                  textStyle: TextStyle(
-                                                      fontSize: 15,
-                                                      color: Colors.black))),
-                                          SizedBox(height: 10),
-                                          Text("Made with ❤ by dumpy",
-                                              style: GoogleFonts.montserrat(
-                                                  textStyle: TextStyle(
-                                                      fontSize: 15,
-                                                      color: Colors.black))),
-                                          SizedBox(height: 10),
-                                          Text("Version 1.0.0",
-                                              style: GoogleFonts.montserrat(
-                                                  textStyle: TextStyle(
-                                                      fontSize: 15,
-                                                      color: Colors.black))),
-                                          ElevatedButton(
-                                              onPressed: () {
-                                                showDialog(
-                                                  context: context,
-                                                  builder: (BuildContext context) =>
-                                                      _buildPopupDialog(context),
-                                                );
-                                              },
-                                              child: Text("Click Me!")),
-                                        ],
-                                      )));
-                                });
-                          },
-                          child: Row(
-                            children: [
-                              Icon(Icons.info),
-                              SizedBox(
-                                width: 3,
-                              ),
-                              Text('Info')
-                            ],
-                          )),
-                      SizedBox(width: 10),
-                      ElevatedButton(
-                          onPressed: fetchAll,
-                          child: Row(
-                            children: [
-                              Icon(Icons.refresh),
-                              SizedBox(
-                                width: 3,
-                              ),
-                              Text('Refresh')
-                            ],
-                          )),
-                    ],
-                  ),
-                ],
-              ),
-            )
-          ],
-        )
-      ),
+                  ],
+                ),
+              )
+            ],
+          )),
     );
   }
 }

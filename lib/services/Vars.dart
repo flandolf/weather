@@ -11,6 +11,8 @@ String hourtemp10 = "";
 String hourtemp11 = "";
 String hourtemp12 = "";
 
+String location = "";
+
 String hourweather1 = "";
 String hourweather2 = "";
 String hourweather3 = "";
@@ -44,4 +46,13 @@ String windspeed = "";
 String uvindex = "";
 int sunrise = 0;
 int sunset = 0;
-
+String airQuality = "";
+double co = 0;
+double no = 0;
+double no2 = 0;
+double o3 = 0;
+double pm10 = 0;
+double pm25 = 0;
+double so2 = 0;
+String gust = '';
+String winddirection = '';
