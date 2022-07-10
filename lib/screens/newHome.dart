@@ -266,7 +266,7 @@ class _newHomeState extends State<newHome> {
               Container(
                 height: MediaQuery.of(context).size.height,
                 width: MediaQuery.of(context).size.width,
-                color: Color.fromRGBO(38, 38, 38, 1.0),
+                color: Color.fromRGBO(0, 0, 37, 1.0),
                 child: Column(
                   children: [
                     SizedBox(
@@ -282,13 +282,25 @@ class _newHomeState extends State<newHome> {
                           children: [
                             Row(
                               children: [
-                                Text(
-                                  '$Temp°C',
-                                  style: GoogleFonts.montserrat(
-                                    fontSize: 45,
-                                    fontWeight: FontWeight.w800,
-                                    color: Colors.white,
-                                  ),
+                                Row(
+                                  children: [
+                                    Text(
+                                      '$Temp',
+                                      style: GoogleFonts.aBeeZee(
+                                        fontSize: 45,
+                                        fontWeight: FontWeight.w800,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    Text(
+                                      '°C',
+                                      style: GoogleFonts.aBeeZee(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w800,
+                                        color: Colors.white,
+                                      ),
+                                    )
+                                  ]
                                 ),
                                 SizedBox(
                                   width: 10,
@@ -348,7 +360,7 @@ class _newHomeState extends State<newHome> {
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10),
 
-                                  color: Colors.white,
+                                  color: Color.fromARGB(0, 0, 0, 0),
                                 ),
                                 padding: EdgeInsets.all(4),
                                 child: Column(
@@ -418,7 +430,7 @@ class _newHomeState extends State<newHome> {
                     Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
-                        color: Color(0xFFF57C00),
+                        color: Color(0xFF311B92),
                       ),
                       margin: EdgeInsets.all(10),
                       padding:
@@ -556,7 +568,7 @@ class _newHomeState extends State<newHome> {
                     Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
-                          color: Color(0xFFF57C00),
+                          color: Color(0xFF311B92),
                         ),
                         width: MediaQuery.of(context).size.width,
                         margin: EdgeInsets.all(7),
@@ -594,7 +606,7 @@ class _newHomeState extends State<newHome> {
                         height: MediaQuery.of(context).size.height * 0.2,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
-                          color: Color(0xFFF57C00),
+                          color: Color(0xFF311B92),
                         ),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -672,7 +684,7 @@ class _newHomeState extends State<newHome> {
                                                     color: Colors.white))),
                                       ],
                                     ),
-                                    Text("${unixtoTime(sunrise)}",
+                                    Text(unixtoTime(sunrise),
                                         style: GoogleFonts.montserrat(
                                             textStyle: TextStyle(
                                                 fontSize: 20,
@@ -690,7 +702,7 @@ class _newHomeState extends State<newHome> {
                                                     color: Colors.white))),
                                       ],
                                     ),
-                                    Text("${unixtoTime(sunset)}",
+                                    Text(unixtoTime(sunset),
                                         style: GoogleFonts.montserrat(
                                             textStyle: TextStyle(
                                                 fontSize: 20,
@@ -705,15 +717,20 @@ class _newHomeState extends State<newHome> {
                         ElevatedButton(
                             onPressed: () {
                               showModalBottomSheet(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
                                   context: context,
                                   builder: (BuildContext context) {
                                     return (Container(
-                                        height: 200,
+                                        height: 450,
                                         decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(20)),
+                                          color: Colors.deepPurple[900],
+                                          borderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(20),
+                                              topRight: Radius.circular(20)),
                                         ),
+
                                         child: Column(
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
@@ -725,25 +742,25 @@ class _newHomeState extends State<newHome> {
                                                 style: GoogleFonts.rubik(
                                                     textStyle: TextStyle(
                                                         fontSize: 20,
-                                                        color: Colors.black))),
+                                                        color: Colors.white))),
                                             SizedBox(height: 10),
                                             Text("Data from OpenWeatherMap",
                                                 style: GoogleFonts.montserrat(
                                                     textStyle: TextStyle(
                                                         fontSize: 15,
-                                                        color: Colors.black))),
+                                                        color: Colors.white))),
                                             SizedBox(height: 10),
                                             Text("Made with ❤ by dumpy",
                                                 style: GoogleFonts.montserrat(
                                                     textStyle: TextStyle(
                                                         fontSize: 15,
-                                                        color: Colors.black))),
+                                                        color: Colors.white))),
                                             SizedBox(height: 10),
                                             Text("Version 4.2.3",
                                                 style: GoogleFonts.montserrat(
                                                     textStyle: TextStyle(
                                                         fontSize: 15,
-                                                        color: Colors.black))),
+                                                        color: Colors.white))),
                                             ElevatedButton(
                                                 onPressed: () {
                                                   showDialog(
@@ -793,7 +810,7 @@ class _newHomeState extends State<newHome> {
 
 Widget _buildPopupDialog(BuildContext context) {
   return AlertDialog(
-    backgroundColor: Colors.orange,
+    backgroundColor: Colors.deepPurple[800],
     title: const Text(
       'Thank you for using this app!',
       style: TextStyle(color: Colors.white),

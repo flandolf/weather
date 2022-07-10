@@ -19,7 +19,7 @@ class _airqualityState extends State<airquality> {
             horizontal: 10,
             vertical: MediaQuery.of(context).size.height * 0.05),
 
-        color: Color.fromRGBO(38, 38, 38, 1.0),
+        color: Color.fromRGBO(0, 0, 37, 1.0),
         child: Column(
           children: [
             Row(children: [
@@ -43,7 +43,7 @@ class _airqualityState extends State<airquality> {
               padding: EdgeInsets.all(5),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10.0),
-                color: Color(0xFFFF9034),
+                color: Color(0xFF311B92),
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -511,7 +511,7 @@ class _airqualityState extends State<airquality> {
               width: MediaQuery.of(context).size.width,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10.0),
-                color: Color(0xFFFF9034),
+                color: Color(0xFF311B92),
               ),
               child: Column(
                 children: [

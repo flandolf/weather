@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Weather',
       theme: ThemeData(
-        primarySwatch: Colors.deepOrange,
+        primarySwatch: Colors.deepPurple,
         useMaterial3: true,
       ),
       themeMode: ThemeMode.dark,

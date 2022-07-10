@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, file_names
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:weather/services/custom_icons_icons.dart';
@@ -9,7 +9,7 @@ Widget hourlyweather(
     padding: EdgeInsets.symmetric(horizontal: 5, vertical: 0),
     decoration: BoxDecoration(
       borderRadius: BorderRadius.circular(15.0),
-      color: Color(0xFFFF9034),
+      color: Color(0xFF5E35B1),
     ),
     child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -47,12 +47,12 @@ Widget hourlyweather(
           padding: EdgeInsets.all(5),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10.0),
-            color: Color(0xFFFF7543),
+            color: Color(0xFF280680),
           ),
           child: Column(
             children: [
               Text(
-                temp + '°C',
+                '$temp°C',
                 style: GoogleFonts.montserrat(
                   fontSize: 20.0,
                   color: Colors.white,

@@ -14,7 +14,7 @@ Widget forecastWidget(
       margin: EdgeInsets.all(6),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10.0),
-        color: Color(0xFFFF9034),
+        color: Color(0xFF6746C3),
       ),
       child: Column(
         children: [
@@ -47,7 +47,7 @@ Widget forecastWidget(
           Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10.0),
-              color: Color(0xFFFF7543),
+              color: Color(0xFF280680),
             ),
             padding: EdgeInsets.all(3),
             child: Column(
