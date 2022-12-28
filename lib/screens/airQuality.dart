@@ -538,7 +538,7 @@ class _airqualityState extends State<airquality> {
                                         fontSize: 15,
                                         color: Colors.white,
                                         fontWeight: FontWeight.w500))),
-                            Text("$windspeed m/s", style: GoogleFonts.montserrat(
+                            Text("$windSpeed m/s", style: GoogleFonts.montserrat(
                                 textStyle: TextStyle(
                                     fontSize: 10,
                                     color: Colors.white,
@@ -561,57 +561,57 @@ class _airqualityState extends State<airquality> {
                                         fontSize: 15,
                                         color: Colors.white,
                                         fontWeight: FontWeight.w500))),
-                            if(int.parse(winddirection) >= 0 && int.parse(winddirection) < 45)
-                              Text("North ($winddirection°)", style: GoogleFonts.montserrat(
+                            if(int.parse(windDirection) >= 0 && int.parse(windDirection) < 45)
+                              Text("North ($windDirection°)", style: GoogleFonts.montserrat(
                                   textStyle: TextStyle(
                                       fontSize: 10,
                                       color: Colors.white,
                                       fontWeight: FontWeight.w500))),
-                            if(int.parse(winddirection) >= 45 && int.parse(winddirection) < 90)
-                              Text("North East ($winddirection°)", style: GoogleFonts.montserrat(
+                            if(int.parse(windDirection) >= 45 && int.parse(windDirection) < 90)
+                              Text("North East ($windDirection°)", style: GoogleFonts.montserrat(
                                   textStyle: TextStyle(
                                       fontSize: 10,
                                       color: Colors.white,
                                       fontWeight: FontWeight.w500))),
-                            if(int.parse(winddirection) >= 90 && int.parse(winddirection) < 135)
-                              Text("East ($winddirection°)", style: GoogleFonts.montserrat(
+                            if(int.parse(windDirection) >= 90 && int.parse(windDirection) < 135)
+                              Text("East ($windDirection°)", style: GoogleFonts.montserrat(
                                   textStyle: TextStyle(
                                       fontSize: 10,
                                       color: Colors.white,
                                       fontWeight: FontWeight.w500))),
-                            if(int.parse(winddirection) >= 135 && int.parse(winddirection) < 180)
+                            if(int.parse(windDirection) >= 135 && int.parse(windDirection) < 180)
 
-                              Text("South East ($winddirection°)", style: GoogleFonts.montserrat(
+                              Text("South East ($windDirection°)", style: GoogleFonts.montserrat(
                                   textStyle: TextStyle(
                                       fontSize: 10,
                                       color: Colors.white,
                                       fontWeight: FontWeight.w500))),
-                            if(int.parse(winddirection) >= 180 && int.parse(winddirection) < 225)
-                              Text("South ($winddirection°)", style: GoogleFonts.montserrat(
+                            if(int.parse(windDirection) >= 180 && int.parse(windDirection) < 225)
+                              Text("South ($windDirection°)", style: GoogleFonts.montserrat(
                                   textStyle: TextStyle(
                                       fontSize: 10,
                                       color: Colors.white,
                                       fontWeight: FontWeight.w500))),
-                            if(int.parse(winddirection) >= 225 && int.parse(winddirection) < 270)
-                              Text("South West ($winddirection°)", style: GoogleFonts.montserrat(
+                            if(int.parse(windDirection) >= 225 && int.parse(windDirection) < 270)
+                              Text("South West ($windDirection°)", style: GoogleFonts.montserrat(
                                   textStyle: TextStyle(
                                       fontSize: 10,
                                       color: Colors.white,
                                       fontWeight: FontWeight.w500))),
-                            if(int.parse(winddirection) >= 270 && int.parse(winddirection) < 315)
-                              Text("West ($winddirection°)", style: GoogleFonts.montserrat(
+                            if(int.parse(windDirection) >= 270 && int.parse(windDirection) < 315)
+                              Text("West ($windDirection°)", style: GoogleFonts.montserrat(
                                   textStyle: TextStyle(
                                       fontSize: 10,
                                       color: Colors.white,
                                       fontWeight: FontWeight.w500))),
-                            if(int.parse(winddirection) >= 315 && int.parse(winddirection) < 360)
-                              Text("North West ($winddirection°)", style: GoogleFonts.montserrat(
+                            if(int.parse(windDirection) >= 315 && int.parse(windDirection) < 360)
+                              Text("North West ($windDirection°)", style: GoogleFonts.montserrat(
                                   textStyle: TextStyle(
                                       fontSize: 10,
                                       color: Colors.white,
                                       fontWeight: FontWeight.w500))),
-                            if(int.parse(winddirection) == 360)
-                              Text("North ($winddirection°)", style: GoogleFonts.montserrat(
+                            if(int.parse(windDirection) == 360)
+                              Text("North ($windDirection°)", style: GoogleFonts.montserrat(
                                   textStyle: TextStyle(
                                       fontSize: 10,
                                       color: Colors.white,

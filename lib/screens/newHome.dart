@@ -15,21 +15,13 @@ import 'package:weather/services/custom_icons_icons.dart';
 import 'package:weather/widgets/forecastWidget.dart';
 import 'package:weather/widgets/hourlyWeatherWidget.dart';
 
-var forecastd1 = "";
-var forecastd2 = "";
-var forecastd3 = "";
-var forecastd4 = "";
-var forecastd5 = "";
-var forecastda1 = "";
-var forecastda2 = "";
-var forecastda3 = "";
-var forecastda4 = "";
-var forecastda5 = "";
-var forecastdm1 = "";
-var forecastdm2 = "";
-var forecastdm3 = "";
-var forecastdm4 = "";
-var forecastdm5 = "";
+var temp_max = [];
+var temperature = [];
+var temp_min = [];
+var hourly_wind = [];
+var hourly_weather = [];
+var hourly_temperature = [];
+
 int? feelsLike;
 String? lat;
 String? longitude;
@@ -106,13 +98,13 @@ class _newHomeState extends State<newHome> {
         maxtempcurrent = parsedJson['daily'][0]['temp']['max'].round().toInt();
         weatherState = parsedJson['current']['weather'][0]['main'];
         humidity = parsedJson['current']['humidity'].toString();
-        windspeed = parsedJson['current']['wind_speed'].toString();
+        windSpeed = parsedJson['current']['wind_speed'].toString();
         pressure = parsedJson['current']['pressure'].toString();
-        uvindex = parsedJson['current']['uvi'].toString();
+        uvIndex = parsedJson['current']['uvi'].toString();
         sunset = parsedJson['current']['sunset'];
         sunrise = parsedJson['current']['sunrise'];
         gust = parsedJson['current']['wind_gust'].toString();
-        winddirection = parsedJson['current']['wind_deg'].toString();
+        windDirection = parsedJson['current']['wind_deg'].toString();
       });
     } else {
       // If the server did not return a 200 OK response,
@@ -174,42 +166,27 @@ class _newHomeState extends State<newHome> {
       var parsedF = json.decode(forecastJson);
 
       setState(() {
-        forecastd1 = parsedF['list'][0]['main']['temp_max'].round().toString();
-        forecastd2 = parsedF['list'][1]['main']['temp_max'].round().toString();
-        forecastd3 = parsedF['list'][2]['main']['temp_max'].round().toString();
-        forecastda1 = parsedF['list'][0]['main']['temp'].round().toString();
-        forecastda2 = parsedF['list'][1]['main']['temp'].round().toString();
-        forecastda3 = parsedF['list'][2]['main']['temp'].round().toString();
-        forecastdm1 = parsedF['list'][0]['main']['temp_min'].round().toString();
-        forecastdm2 = parsedF['list'][1]['main']['temp_min'].round().toString();
-        forecastdm3 = parsedF['list'][2]['main']['temp_min'].round().toString();
-        hourweather1 = parsedF['list'][0]['weather'][0]['main'];
-        hourweather2 = parsedF['list'][1]['weather'][0]['main'];
-        hourweather3 = parsedF['list'][2]['weather'][0]['main'];
-        hourweather4 = parsedF['list'][3]['weather'][0]['main'];
-        hourweather5 = parsedF['list'][4]['weather'][0]['main'];
-        hourweather6 = parsedF['list'][5]['weather'][0]['main'];
-        hourweather7 = parsedF['list'][6]['weather'][0]['main'];
-        hourweather8 = parsedF['list'][7]['weather'][0]['main'];
-        hourweather9 = parsedF['list'][8]['weather'][0]['main'];
-        hourweather10 = parsedF['list'][9]['weather'][0]['main'];
-        hourweather11 = parsedF['list'][10]['weather'][0]['main'];
-        hourweather12 = parsedF['list'][11]['weather'][0]['main'];
+        for (int i = 0; i < 3; i++) {
+          temp_max[i] = parsedF['list'][i]['main']['temp_max'].round();
+        }
+        for (int i = 0; i < 3; i++) {
+          temperature[i] = parsedF['list'][i]['main']['temp'].round();
+        }
+        for (int i = 0; i < 3; i++) {
+          temp_min[i] = parsedF['list'][i]['main']['temp_min'].round();
+        }
+        for (int i = 0; i < 12; i++) {
+          hourly_weather[i] =
+              parsedF['list'][i]['main']['temp'].round().toString();
+        }
+
         day1state = parsedF['list'][0]['weather'][0]['main'];
         day2state = parsedF['list'][1]['weather'][0]['main'];
         day3state = parsedF['list'][2]['weather'][0]['main'];
-        hourwind1 = parsedF['list'][0]['wind']['speed'].round().toString();
-        hourwind2 = parsedF['list'][1]['wind']['speed'].round().toString();
-        hourwind3 = parsedF['list'][2]['wind']['speed'].round().toString();
-        hourwind4 = parsedF['list'][3]['wind']['speed'].round().toString();
-        hourwind5 = parsedF['list'][4]['wind']['speed'].round().toString();
-        hourwind6 = parsedF['list'][5]['wind']['speed'].round().toString();
-        hourwind7 = parsedF['list'][6]['wind']['speed'].round().toString();
-        hourwind8 = parsedF['list'][7]['wind']['speed'].round().toString();
-        hourwind9 = parsedF['list'][8]['wind']['speed'].round().toString();
-        hourwind10 = parsedF['list'][9]['wind']['speed'].round().toString();
-        hourwind11 = parsedF['list'][10]['wind']['speed'].round().toString();
-        hourwind12 = parsedF['list'][11]['wind']['speed'].round().toString();
+
+        for (int i = 0; i < 12; i++) {
+          hourly_wind[i] = parsedF['list'][i]['wind']['speed'].toString();
+        }
       });
     } else {
       throw Exception('Failed to load weather');
@@ -223,18 +200,9 @@ class _newHomeState extends State<newHome> {
 
     var decodedjson = json.decode(response.body);
     setState(() {
-      hourtemp1 = decodedjson['hourly'][0]['temp'].round().toString();
-      hourtemp2 = decodedjson['hourly'][1]['temp'].round().toString();
-      hourtemp3 = decodedjson['hourly'][2]['temp'].round().toString();
-      hourtemp4 = decodedjson['hourly'][3]['temp'].round().toString();
-      hourtemp5 = decodedjson['hourly'][4]['temp'].round().toString();
-      hourtemp6 = decodedjson['hourly'][5]['temp'].round().toString();
-      hourtemp7 = decodedjson['hourly'][6]['temp'].round().toString();
-      hourtemp8 = decodedjson['hourly'][7]['temp'].round().toString();
-      hourtemp9 = decodedjson['hourly'][8]['temp'].round().toString();
-      hourtemp10 = decodedjson['hourly'][9]['temp'].round().toString();
-      hourtemp11 = decodedjson['hourly'][10]['temp'].round().toString();
-      hourtemp12 = decodedjson['hourly'][11]['temp'].round().toString();
+      for (int i = 0; i < 12; i++) {
+        hourly_weather[i] = decodedjson['hourly'][i]['temp'].round().toString();
+      }
     });
   }
 
@@ -282,26 +250,24 @@ class _newHomeState extends State<newHome> {
                           children: [
                             Row(
                               children: [
-                                Row(
-                                  children: [
-                                    Text(
-                                      '$Temp',
-                                      style: GoogleFonts.aBeeZee(
-                                        fontSize: 45,
-                                        fontWeight: FontWeight.w800,
-                                        color: Colors.white,
-                                      ),
+                                Row(children: [
+                                  Text(
+                                    '$Temp',
+                                    style: GoogleFonts.aBeeZee(
+                                      fontSize: 45,
+                                      fontWeight: FontWeight.w800,
+                                      color: Colors.white,
                                     ),
-                                    Text(
-                                      '°C',
-                                      style: GoogleFonts.aBeeZee(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w800,
-                                        color: Colors.white,
-                                      ),
-                                    )
-                                  ]
-                                ),
+                                  ),
+                                  Text(
+                                    '°C',
+                                    style: GoogleFonts.aBeeZee(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w800,
+                                      color: Colors.white,
+                                    ),
+                                  )
+                                ]),
                                 SizedBox(
                                   width: 10,
                                 ),
@@ -347,57 +313,60 @@ class _newHomeState extends State<newHome> {
                             ),
                             GestureDetector(
                               onTap: () {
-                                Navigator.push(context , PageRouteBuilder(
-                                  pageBuilder: (c, a1, a2) => airquality(),
-                                  transitionsBuilder: (c, anim, a2, child) => FadeTransition(
-                                    opacity: anim.drive(CurveTween(curve: Curves.easeInOut)),
-                                    child: child,
+                                Navigator.push(
+                                  context,
+                                  PageRouteBuilder(
+                                    pageBuilder: (c, a1, a2) => airquality(),
+                                    transitionsBuilder: (c, anim, a2, child) =>
+                                        FadeTransition(
+                                      opacity: anim.drive(
+                                          CurveTween(curve: Curves.easeInOut)),
+                                      child: child,
+                                    ),
+                                    transitionDuration:
+                                        Duration(milliseconds: 250),
                                   ),
-                                  transitionDuration: Duration(milliseconds: 250),
-                                ),);
+                                );
                               },
                               child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-
-                                  color: Color.fromARGB(0, 0, 0, 0),
-                                ),
-                                padding: EdgeInsets.all(4),
-                                child: Column(
-                                  children: [
-                                    if (airQuality == '1')
-                                      Text("Air Quality: Good",
-                                          style: GoogleFonts.montserrat(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w400,
-                                            color: Colors.green,
-                                          )),
-                                    if (airQuality == '2')
-                                      Text("Air Quality: Fair",
-                                          style: GoogleFonts.montserrat(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w400,
-                                            color: Colors.yellow,
-                                          )),
-                                    if (airQuality == '3')
-                                      Text("Air Quality: Bad",
-                                          style: GoogleFonts.montserrat(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w400,
-                                            color: Colors.orange,
-                                          )),
-                                    if (int.parse(airQuality) > 3)
-                                      Text("Air Quality: Dangerous",
-                                          style: GoogleFonts.montserrat(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w400,
-                                            color: Colors.red[900],
-                                          )),
-                                  ],
-                                )
-
-                              ),
-                              )
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: Color.fromARGB(0, 0, 0, 0),
+                                  ),
+                                  padding: EdgeInsets.all(4),
+                                  child: Column(
+                                    children: [
+                                      if (airQuality == '1')
+                                        Text("Air Quality: Good",
+                                            style: GoogleFonts.montserrat(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.w400,
+                                              color: Colors.green,
+                                            )),
+                                      if (airQuality == '2')
+                                        Text("Air Quality: Fair",
+                                            style: GoogleFonts.montserrat(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.w400,
+                                              color: Colors.yellow,
+                                            )),
+                                      if (airQuality == '3')
+                                        Text("Air Quality: Bad",
+                                            style: GoogleFonts.montserrat(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.w400,
+                                              color: Colors.orange,
+                                            )),
+                                      if (int.parse(airQuality) > 3)
+                                        Text("Air Quality: Dangerous",
+                                            style: GoogleFonts.montserrat(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.w400,
+                                              color: Colors.red[900],
+                                            )),
+                                    ],
+                                  )),
+                            )
                           ],
                         ),
                         Spacer(),
@@ -428,140 +397,29 @@ class _newHomeState extends State<newHome> {
                       height: 5,
                     ),
                     Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        color: Color(0xFF311B92),
-                      ),
-                      margin: EdgeInsets.all(10),
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                      height: MediaQuery.of(context).size.height * 0.18,
-                      width: MediaQuery.of(context).size.width,
-                      child: ListView(
-                        scrollDirection: Axis.horizontal,
-                        children: <Widget>[
-                          Container(
-                              child: hourlyweather(
-                                  DateFormat("ha")
-                                      .format(DateTime.now()
-                                          .add(Duration(hours: 1)))
-                                      .toString(),
-                                  hourtemp1,
-                                  hourweather1,
-                                  hourwind1)),
-                          SizedBox(width: 7),
-                          Container(
-                              child: hourlyweather(
-                                  DateFormat("ha")
-                                      .format(DateTime.now()
-                                          .add(Duration(hours: 2)))
-                                      .toString(),
-                                  hourtemp2,
-                                  hourweather2,
-                                  hourwind2)),
-                          SizedBox(width: 7),
-                          Container(
-                              child: hourlyweather(
-                                  DateFormat("ha")
-                                      .format(DateTime.now()
-                                          .add(Duration(hours: 3)))
-                                      .toString(),
-                                  hourtemp3,
-                                  hourweather3,
-                                  hourwind3)),
-                          SizedBox(width: 7),
-                          Container(
-                              child: hourlyweather(
-                                  DateFormat("ha")
-                                      .format(DateTime.now()
-                                          .add(Duration(hours: 4)))
-                                      .toString(),
-                                  hourtemp4,
-                                  hourweather4,
-                                  hourwind4)),
-                          SizedBox(width: 7),
-                          Container(
-                              child: hourlyweather(
-                                  DateFormat("ha")
-                                      .format(DateTime.now()
-                                          .add(Duration(hours: 5)))
-                                      .toString(),
-                                  hourtemp5,
-                                  hourweather5,
-                                  hourwind5)),
-                          SizedBox(width: 7),
-                          Container(
-                              child: hourlyweather(
-                                  DateFormat("ha")
-                                      .format(DateTime.now()
-                                          .add(Duration(hours: 6)))
-                                      .toString(),
-                                  hourtemp6,
-                                  hourweather6,
-                                  hourwind6)),
-                          SizedBox(width: 7),
-                          Container(
-                              child: hourlyweather(
-                                  DateFormat("ha")
-                                      .format(DateTime.now()
-                                          .add(Duration(hours: 7)))
-                                      .toString(),
-                                  hourtemp7,
-                                  hourweather7,
-                                  hourwind7)),
-                          SizedBox(width: 7),
-                          Container(
-                              child: hourlyweather(
-                                  DateFormat("ha")
-                                      .format(DateTime.now()
-                                          .add(Duration(hours: 8)))
-                                      .toString(),
-                                  hourtemp8,
-                                  hourweather8,
-                                  hourwind8)),
-                          SizedBox(width: 7),
-                          Container(
-                              child: hourlyweather(
-                                  DateFormat("ha")
-                                      .format(DateTime.now()
-                                          .add(Duration(hours: 9)))
-                                      .toString(),
-                                  hourtemp9,
-                                  hourweather9,
-                                  hourwind9)),
-                          SizedBox(width: 7),
-                          Container(
-                              child: hourlyweather(
-                                  DateFormat("ha")
-                                      .format(DateTime.now()
-                                          .add(Duration(hours: 10)))
-                                      .toString(),
-                                  hourtemp10,
-                                  hourweather10,
-                                  hourwind10)),
-                          SizedBox(width: 7),
-                          Container(
-                              child: hourlyweather(
-                                  DateFormat("ha")
-                                      .format(DateTime.now()
-                                          .add(Duration(hours: 11)))
-                                      .toString(),
-                                  hourtemp11,
-                                  hourweather11,
-                                  hourwind11)),
-                          SizedBox(width: 7),
-                          Container(
-                              child: hourlyweather(
-                                  DateFormat("ha")
-                                      .format(DateTime.now()
-                                          .add(Duration(hours: 12)))
-                                      .toString(),
-                                  hourtemp12,
-                                  hourweather12,
-                                  hourwind12)),
-                        ],
-                      ),
-                    ),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          color: Color(0xFF311B92),
+                        ),
+                        margin: EdgeInsets.all(10),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                        height: MediaQuery.of(context).size.height * 0.18,
+                        width: MediaQuery.of(context).size.width,
+                        child: ListView.builder(
+                          itemCount: 12,
+                          itemBuilder: (context, index) {
+                            return Container(
+                                child: hourlyweather(
+                                    DateFormat("ha")
+                                        .format(DateTime.now()
+                                            .add(Duration(hours: index + 1)))
+                                        .toString(),
+                                    hourly_temperature[index],
+                                    hourly_weather[index],
+                                    hourly_wind[index]));
+                          },
+                        )),
                     SizedBox(
                       height: 5,
                     ),
@@ -581,23 +439,23 @@ class _newHomeState extends State<newHome> {
                                 child: forecastWidget(
                                     day: "Day 1",
                                     weatherIcon: day1state,
-                                    temp: "Avg: $forecastda1°C",
-                                    tempHigh: "Max: $forecastd1°C",
-                                    tempLow: "Min: $forecastdm1°C")),
+                                    temp: "Avg: ${temperature[0]}°C",
+                                    tempHigh: "Max: ${temp_max[0]}°C",
+                                    tempLow: "Min: ${temp_min[0]}°C")),
                             Container(
                                 child: forecastWidget(
-                                    day: "Day 2",
-                                    weatherIcon: day2state,
-                                    temp: "Avg: $forecastda2°C",
-                                    tempHigh: "Max: $forecastd2°C",
-                                    tempLow: "Min: $forecastdm2°C")),
+                                    day: "Day 1",
+                                    weatherIcon: day1state,
+                                    temp: "Avg: ${temperature[1]}°C",
+                                    tempHigh: "Max: ${temp_max[1]}°C",
+                                    tempLow: "Min: ${temp_min[1]}°C")),
                             Container(
                                 child: forecastWidget(
-                                    day: "Day 3",
-                                    weatherIcon: day3state,
-                                    temp: "Avg: $forecastda3°C",
-                                    tempHigh: "Max: $forecastd3°C",
-                                    tempLow: "Min: $forecastdm3°C")),
+                                    day: "Day 1",
+                                    weatherIcon: day1state,
+                                    temp: "Avg: ${temperature[2]}°C",
+                                    tempHigh: "Max: ${temp_max[2]}°C",
+                                    tempLow: "Min: ${temp_min[2]}°C")),
                           ],
                         )),
                     Container(
@@ -639,7 +497,7 @@ class _newHomeState extends State<newHome> {
                                             textStyle: TextStyle(
                                                 fontSize: 17,
                                                 color: Colors.white))),
-                                    Text("${windspeed}m/s",
+                                    Text("${windSpeed}m/s",
                                         style: GoogleFonts.montserrat(
                                             textStyle: TextStyle(
                                                 fontSize: 15,
@@ -717,9 +575,9 @@ class _newHomeState extends State<newHome> {
                         ElevatedButton(
                             onPressed: () {
                               showModalBottomSheet(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
                                   context: context,
                                   builder: (BuildContext context) {
                                     return (Container(
@@ -730,7 +588,6 @@ class _newHomeState extends State<newHome> {
                                               topLeft: Radius.circular(20),
                                               topRight: Radius.circular(20)),
                                         ),
-
                                         child: Column(
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
