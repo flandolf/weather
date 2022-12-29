@@ -10,33 +10,28 @@ import 'package:intl/intl.dart';
 import 'package:weather/screens/airQuality.dart';
 
 import 'package:weather/services/secrets.dart';
-import 'package:weather/services/Vars.dart';
+import 'package:weather/services/vars.dart';
 import 'package:weather/services/custom_icons_icons.dart';
 import 'package:weather/widgets/forecastWidget.dart';
 import 'package:weather/widgets/hourlyWeatherWidget.dart';
 
-var temp_max = [];
-var temperature = [];
-var temp_min = [];
-var hourly_wind = [];
-var hourly_weather = [];
-var hourly_temperature = [];
-
+var tempMax = 0;
+var currentTemp = 0;
+var tempMin = 0;
+var hourlyWind = [];
+var hourlyWeather = [];
+var hourlyTemperature = [];
+var threeDayState = [];
+var threeDayTemp = [];
+var threeDayMin = [];
+var threeDayMax = [];
 int? feelsLike;
 String? lat;
 String? longitude;
 String currentLocation = "";
 bool currentlyCloudy = false;
-String? JsonData;
-int? Temp;
-int? mintemp;
-int? maxtempcurrent;
-
 String weatherState = "";
 
-String day1state = "";
-String day2state = "";
-String day3state = "";
 
 class newHome extends StatefulWidget {
   const newHome({Key? key}) : super(key: key);
@@ -55,14 +50,16 @@ Future<int> getTimeInt() async {
   return now.hour;
 }
 
+String unixToTime(int unix) {
+  var date = DateTime.fromMillisecondsSinceEpoch(unix * 1000);
+  var formattedDate = DateFormat('h:mm a').format(date);
+  return formattedDate;
+}
+
 class _newHomeState extends State<newHome> {
   Future fetchAll() async {
     await getLocation();
-    await fetchAirQuality();
-    await fetchWeather();
-    await fetchHourly();
-    await fetchForecast();
-    await fetchCurrent();
+    await fetch();
   }
 
   Future getLocation() async {
@@ -70,7 +67,7 @@ class _newHomeState extends State<newHome> {
     Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
     List<Placemark> placemark =
-        await placemarkFromCoordinates(position.latitude, position.longitude);
+    await placemarkFromCoordinates(position.latitude, position.longitude);
     setState(() {
       lat = position.latitude.toString();
       longitude = position.longitude.toString();
@@ -85,124 +82,53 @@ class _newHomeState extends State<newHome> {
     fetchAll();
   }
 
-  Future fetchCurrent() async {
-    final response = await http.get(Uri.parse(
-        'https://api.openweathermap.org/data/2.5/onecall?lat=$lat&lon=$longitude&appid=$apikey&units=metric&exclude=minutely,hourly,alerts'));
-    if (response.statusCode == 200) {
-      var jsonData = response.body;
-      var parsedJson = json.decode(jsonData);
-      setState(() {
-        Temp = parsedJson['current']['temp'].toInt();
-        feelsLike = parsedJson['current']['feels_like'].toInt();
-        mintemp = parsedJson['daily'][0]['temp']['min'].round().toInt();
-        maxtempcurrent = parsedJson['daily'][0]['temp']['max'].round().toInt();
-        weatherState = parsedJson['current']['weather'][0]['main'];
-        humidity = parsedJson['current']['humidity'].toString();
-        windSpeed = parsedJson['current']['wind_speed'].toString();
-        pressure = parsedJson['current']['pressure'].toString();
-        uvIndex = parsedJson['current']['uvi'].toString();
-        sunset = parsedJson['current']['sunset'];
-        sunrise = parsedJson['current']['sunrise'];
-        gust = parsedJson['current']['wind_gust'].toString();
-        windDirection = parsedJson['current']['wind_deg'].toString();
-      });
-    } else {
-      // If the server did not return a 200 OK response,
-      // then throw an exception.
-      throw Exception('Failed to load weather');
-    }
-  }
-
-  String unixtoTime(int unixTime) {
-    DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(unixTime * 1000);
-    return DateFormat.jm().format(dateTime).toString();
-  }
-
-  Future fetchAirQuality() async {
-    final response = await http.get(Uri.parse(
-        'http://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${longitude}&appid=${apikey}'));
-    if (response.statusCode == 200) {
-      var jsonData = response.body;
-      var parsedJson = json.decode(jsonData);
-      print(parsedJson['list'][0]['components']['no2']);
-      setState(() {
-        airQuality = parsedJson['list'][0]['main']['aqi'].toString();
-        co = parsedJson['list'][0]['components']['co'];
-        no2 = parsedJson['list'][0]['components']['no2'];
-        o3 = parsedJson['list'][0]['components']['o3'];
-        pm10 = parsedJson['list'][0]['components']['pm10'];
-        pm25 = parsedJson['list'][0]['components']['pm2_5'];
-        so2 = parsedJson['list'][0]['components']['so2'];
-      });
-    } else {
-      // If the server did not return a 200 OK response,
-      // then throw an exception.
-      throw Exception('Failed to load weather');
-    }
-  }
-
-  Future fetchWeather() async {
-    final response = await http.get(Uri.parse(
-        'https://api.openweathermap.org/data/2.5/weather?lat=$lat&lon=$longitude&appid=$apikey&units=metric'));
-    print(response.body);
-    if (response.statusCode == 200) {
-      var jsonData = response.body;
-      var decodedjson = json.decode(jsonData);
-
-      setState(() {});
-    } else {
-      // If the server did not return a 200 OK response,
-      // then throw an exception.
-      throw Exception('Failed to load weather');
-    }
-  }
-
-  Future fetchForecast() async {
-    var uri =
-        'https://api.openweathermap.org/data/2.5/forecast?lat=$lat&lon=$longitude&appid=$apikey&units=metric';
-    final response = await http.get(Uri.parse(uri));
-    if (response.statusCode == 200) {
-      var forecastJson = response.body;
-      var parsedF = json.decode(forecastJson);
-
-      setState(() {
-        for (int i = 0; i < 3; i++) {
-          temp_max[i] = parsedF['list'][i]['main']['temp_max'].round();
-        }
-        for (int i = 0; i < 3; i++) {
-          temperature[i] = parsedF['list'][i]['main']['temp'].round();
-        }
-        for (int i = 0; i < 3; i++) {
-          temp_min[i] = parsedF['list'][i]['main']['temp_min'].round();
-        }
-        for (int i = 0; i < 12; i++) {
-          hourly_weather[i] =
-              parsedF['list'][i]['main']['temp'].round().toString();
-        }
-
-        day1state = parsedF['list'][0]['weather'][0]['main'];
-        day2state = parsedF['list'][1]['weather'][0]['main'];
-        day3state = parsedF['list'][2]['weather'][0]['main'];
-
-        for (int i = 0; i < 12; i++) {
-          hourly_wind[i] = parsedF['list'][i]['wind']['speed'].toString();
-        }
-      });
-    } else {
-      throw Exception('Failed to load weather');
-    }
-  }
-
-  Future fetchHourly() async {
-    var uri =
-        "https://api.openweathermap.org/data/2.5/onecall?lat=$lat&lon=$longitude&exclude=minutely,daily,alerts,current&appid=$apikey&units=metric";
-    final response = await http.get(Uri.parse(uri));
-
-    var decodedjson = json.decode(response.body);
+  Future fetch() async {
+    final current = await http.get(Uri.parse(
+        "https://api.openweathermap.org/data/2.5/weather?lat=$lat&lon=$longitude&appid=$apikey&units=metric"));
+    final currentJSON = jsonDecode(current.body);
     setState(() {
-      for (int i = 0; i < 12; i++) {
-        hourly_weather[i] = decodedjson['hourly'][i]['temp'].round().toString();
+      currentTemp = currentJSON['main']['temp'].round();
+      feelsLike = currentJSON['main']['feels_like'].round();
+      tempMin = currentJSON['main']['temp_min'].round();
+      tempMax = currentJSON['main']['temp_max'].round();
+      pressure = currentJSON['main']['pressure'].round();
+      humidity = currentJSON['main']['humidity'].round();
+      visibility = currentJSON['visibility'].round();
+      wind_speed = currentJSON['wind']['speed'].round();
+      wind_direction = currentJSON['wind']['deg'].round();
+    });
+    final threeDay = await http.get(Uri.parse(
+        "https://api.openweathermap.org/data/2.5/onecall?lat=$lat&lon=$longitude&exclude=current,minutely,hourly,alerts&appid=$apikey&units=metric"));
+    final threeDayJSON = jsonDecode(threeDay.body);
+    setState(() {
+      for (int i = 0; i < 3; i++) {
+        threeDayState.add(threeDayJSON['daily'][i]['weather'][0]['main']);
+        threeDayMin.add(threeDayJSON['daily'][i]['temp']['min'].round());
+        threeDayMax.add(threeDayJSON['daily'][i]['temp']['max'].round());
       }
+    });
+    final hourly = await http.get(Uri.parse(
+        "https://api.openweathermap.org/data/2.5/onecall?lat=$lat&lon=$longitude&exclude=current,minutely,daily,alerts&appid=$apikey&units=metric"));
+    final hourlyJSON = jsonDecode(hourly.body);
+    setState(() {
+      for (int i = 0; i < 24; i++) {
+        hourlyWeather.add(hourlyJSON['hourly'][i]['weather'][0]['main']);
+        hourlyTemperature.add(hourlyJSON['hourly'][i]['temp'].round());
+        hourlyWind.add(hourlyJSON['hourly'][i]['wind_speed'].round());
+      }
+    });
+    final airQuality = await http.get(Uri.parse(
+        "https://api.openweathermap.org/data/2.5/air_pollution?lat=$lat&lon=$longitude&appid=$apikey"));
+    final airQualityJSON = jsonDecode(airQuality.body);
+    setState(() {
+      aqi = int.parse(airQualityJSON['list'][0]['main']['aqi']);
+      co = airQualityJSON['list'][0]['components']['co'].round();
+      no = airQualityJSON['list'][0]['components']['no'].round();
+      no2 = airQualityJSON['list'][0]['components']['no2'].round();
+      o3 = airQualityJSON['list'][0]['components']['o3'].round();
+      so2 = airQualityJSON['list'][0]['components']['so2'].round();
+      pm25 = airQualityJSON['list'][0]['components']['pm2_5'].round();
+      pm10 = airQualityJSON['list'][0]['components']['pm10'].round();
     });
   }
 
@@ -232,16 +158,28 @@ class _newHomeState extends State<newHome> {
             clipBehavior: Clip.hardEdge,
             children: [
               Container(
-                height: MediaQuery.of(context).size.height,
-                width: MediaQuery.of(context).size.width,
+                height: MediaQuery
+                    .of(context)
+                    .size
+                    .height,
+                width: MediaQuery
+                    .of(context)
+                    .size
+                    .width,
                 color: Color.fromRGBO(0, 0, 37, 1.0),
                 child: Column(
                   children: [
                     SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.05,
+                      height: MediaQuery
+                          .of(context)
+                          .size
+                          .height * 0.05,
                     ),
                     Container(
-                      width: MediaQuery.of(context).size.width,
+                      width: MediaQuery
+                          .of(context)
+                          .size
+                          .width,
                       padding: EdgeInsets.only(left: 10),
                       child: Row(children: [
                         Column(
@@ -252,7 +190,7 @@ class _newHomeState extends State<newHome> {
                               children: [
                                 Row(children: [
                                   Text(
-                                    '$Temp',
+                                    '$currentTemp',
                                     style: GoogleFonts.aBeeZee(
                                       fontSize: 45,
                                       fontWeight: FontWeight.w800,
@@ -316,15 +254,16 @@ class _newHomeState extends State<newHome> {
                                 Navigator.push(
                                   context,
                                   PageRouteBuilder(
-                                    pageBuilder: (c, a1, a2) => airquality(),
+                                    pageBuilder: (c, a1, a2) => airQuality(),
                                     transitionsBuilder: (c, anim, a2, child) =>
                                         FadeTransition(
-                                      opacity: anim.drive(
-                                          CurveTween(curve: Curves.easeInOut)),
-                                      child: child,
-                                    ),
+                                          opacity: anim.drive(
+                                              CurveTween(
+                                                  curve: Curves.easeInOut)),
+                                          child: child,
+                                        ),
                                     transitionDuration:
-                                        Duration(milliseconds: 250),
+                                    Duration(milliseconds: 250),
                                   ),
                                 );
                               },
@@ -336,28 +275,28 @@ class _newHomeState extends State<newHome> {
                                   padding: EdgeInsets.all(4),
                                   child: Column(
                                     children: [
-                                      if (airQuality == '1')
+                                      if (aqi == 1)
                                         Text("Air Quality: Good",
                                             style: GoogleFonts.montserrat(
                                               fontSize: 15,
                                               fontWeight: FontWeight.w400,
                                               color: Colors.green,
                                             )),
-                                      if (airQuality == '2')
+                                      if (aqi == 2)
                                         Text("Air Quality: Fair",
                                             style: GoogleFonts.montserrat(
                                               fontSize: 15,
                                               fontWeight: FontWeight.w400,
                                               color: Colors.yellow,
                                             )),
-                                      if (airQuality == '3')
+                                      if (aqi == 3)
                                         Text("Air Quality: Bad",
                                             style: GoogleFonts.montserrat(
                                               fontSize: 15,
                                               fontWeight: FontWeight.w400,
                                               color: Colors.orange,
                                             )),
-                                      if (int.parse(airQuality) > 3)
+                                      if (aqi > 3)
                                         Text("Air Quality: Dangerous",
                                             style: GoogleFonts.montserrat(
                                               fontSize: 15,
@@ -403,9 +342,15 @@ class _newHomeState extends State<newHome> {
                         ),
                         margin: EdgeInsets.all(10),
                         padding:
-                            EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                        height: MediaQuery.of(context).size.height * 0.18,
-                        width: MediaQuery.of(context).size.width,
+                        EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                        height: MediaQuery
+                            .of(context)
+                            .size
+                            .height * 0.18,
+                        width: MediaQuery
+                            .of(context)
+                            .size
+                            .width,
                         child: ListView.builder(
                           itemCount: 12,
                           itemBuilder: (context, index) {
@@ -413,11 +358,11 @@ class _newHomeState extends State<newHome> {
                                 child: hourlyweather(
                                     DateFormat("ha")
                                         .format(DateTime.now()
-                                            .add(Duration(hours: index + 1)))
+                                        .add(Duration(hours: index + 1)))
                                         .toString(),
-                                    hourly_temperature[index],
-                                    hourly_weather[index],
-                                    hourly_wind[index]));
+                                    hourlyTemperature[index],
+                                    hourlyWeather[index],
+                                    hourlyWind[index]));
                           },
                         )),
                     SizedBox(
@@ -428,7 +373,10 @@ class _newHomeState extends State<newHome> {
                           borderRadius: BorderRadius.circular(20),
                           color: Color(0xFF311B92),
                         ),
-                        width: MediaQuery.of(context).size.width,
+                        width: MediaQuery
+                            .of(context)
+                            .size
+                            .width,
                         margin: EdgeInsets.all(7),
                         padding: EdgeInsets.all(5),
                         child: Row(
@@ -438,30 +386,34 @@ class _newHomeState extends State<newHome> {
                             Container(
                                 child: forecastWidget(
                                     day: "Day 1",
-                                    weatherIcon: day1state,
-                                    temp: "Avg: ${temperature[0]}°C",
-                                    tempHigh: "Max: ${temp_max[0]}°C",
-                                    tempLow: "Min: ${temp_min[0]}°C")),
+                                    weatherIcon: threeDayState[0],
+                                    temp: "Avg: ${threeDayTemp[0]}°C",
+                                    tempHigh: "Max: ${threeDayMax[0]}°C",
+                                    tempLow: "Min: ${threeDayMin[0]}°C")),
                             Container(
                                 child: forecastWidget(
                                     day: "Day 1",
-                                    weatherIcon: day1state,
-                                    temp: "Avg: ${temperature[1]}°C",
-                                    tempHigh: "Max: ${temp_max[1]}°C",
-                                    tempLow: "Min: ${temp_min[1]}°C")),
+                                    weatherIcon: threeDayState[1],
+                                    temp: "Avg: ${threeDayTemp[1]}°C",
+                                    tempHigh: "Max: ${threeDayMax[1]}°C",
+                                    tempLow: "Min: ${threeDayMin[1]}°C")),
                             Container(
                                 child: forecastWidget(
                                     day: "Day 1",
-                                    weatherIcon: day1state,
-                                    temp: "Avg: ${temperature[2]}°C",
-                                    tempHigh: "Max: ${temp_max[2]}°C",
-                                    tempLow: "Min: ${temp_min[2]}°C")),
+                                    weatherIcon: threeDayState[2],
+                                    temp: "Avg: ${threeDayTemp[2]}°C",
+                                    tempHigh: "Max: ${threeDayMax[2]}°C",
+                                    tempLow: "Min: ${threeDayMin[2]}°C")),
+
                           ],
                         )),
                     Container(
                         margin: EdgeInsets.all(10),
                         padding: EdgeInsets.all(5),
-                        height: MediaQuery.of(context).size.height * 0.2,
+                        height: MediaQuery
+                            .of(context)
+                            .size
+                            .height * 0.2,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
                           color: Color(0xFF311B92),
@@ -472,8 +424,11 @@ class _newHomeState extends State<newHome> {
                           children: [
                             Container(
                                 width:
-                                    (MediaQuery.of(context).size.width - 40) /
-                                        2,
+                                (MediaQuery
+                                    .of(context)
+                                    .size
+                                    .width - 40) /
+                                    2,
                                 padding: EdgeInsets.all(5),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(20),
@@ -497,7 +452,7 @@ class _newHomeState extends State<newHome> {
                                             textStyle: TextStyle(
                                                 fontSize: 17,
                                                 color: Colors.white))),
-                                    Text("${windSpeed}m/s",
+                                    Text("${wind_speed}m/s",
                                         style: GoogleFonts.montserrat(
                                             textStyle: TextStyle(
                                                 fontSize: 15,
@@ -519,8 +474,11 @@ class _newHomeState extends State<newHome> {
                             ),
                             Container(
                                 width:
-                                    (MediaQuery.of(context).size.width - 40) /
-                                        2,
+                                (MediaQuery
+                                    .of(context)
+                                    .size
+                                    .width - 40) /
+                                    2,
                                 padding: EdgeInsets.all(5),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(20),
@@ -531,7 +489,7 @@ class _newHomeState extends State<newHome> {
                                   children: [
                                     Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.center,
+                                      MainAxisAlignment.center,
                                       children: [
                                         Icon(CustomIcons.sunrise,
                                             color: Colors.yellow, size: 25),
@@ -542,14 +500,14 @@ class _newHomeState extends State<newHome> {
                                                     color: Colors.white))),
                                       ],
                                     ),
-                                    Text(unixtoTime(sunrise),
+                                    Text(unixToTime(sunrise),
                                         style: GoogleFonts.montserrat(
                                             textStyle: TextStyle(
                                                 fontSize: 20,
                                                 color: Colors.white))),
                                     Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.center,
+                                      MainAxisAlignment.center,
                                       children: [
                                         Icon(CustomIcons.moon,
                                             color: Colors.yellow, size: 25),
@@ -560,7 +518,7 @@ class _newHomeState extends State<newHome> {
                                                     color: Colors.white))),
                                       ],
                                     ),
-                                    Text(unixtoTime(sunset),
+                                    Text(unixToTime(sunset),
                                         style: GoogleFonts.montserrat(
                                             textStyle: TextStyle(
                                                 fontSize: 20,
@@ -590,7 +548,7 @@ class _newHomeState extends State<newHome> {
                                         ),
                                         child: Column(
                                           mainAxisAlignment:
-                                              MainAxisAlignment.center,
+                                          MainAxisAlignment.center,
                                           children: [
                                             SizedBox(
                                               height: 10,
@@ -623,7 +581,7 @@ class _newHomeState extends State<newHome> {
                                                   showDialog(
                                                     context: context,
                                                     builder: (BuildContext
-                                                            context) =>
+                                                    context) =>
                                                         _buildPopupDialog(
                                                             context),
                                                   );
